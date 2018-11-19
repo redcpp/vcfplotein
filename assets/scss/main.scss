@@ -1,0 +1,63 @@
+@mixin align-items-center() {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+$sidebar-width: 50px;
+$sidebar-extra-width: 350px;
+$navbar-height: 40px;
+
+
+@import '~bootstrap/scss/bootstrap';
+@import './_light.scss';
+
+@import './_colors.scss';
+
+@import './_scrollbars.scss';
+@import './_checkbox.scss';
+@import './_dragndrop.scss';
+@import './_buttons.scss';
+@import './_cards.scss';
+@import './_navpills.scss';
+@import './_utils.scss';
+
+@import './_index.scss';
+@import './_navbar.scss';
+@import './_sidebar.scss';
+@import './_graph.scss';
+
+*, ::before, ::after {
+  box-sizing: border-box;
+}
+
+.text-black {
+  color: black !important;
+}
+
+.text-normal {
+  text-transform: none;
+}
+
+code {
+  color: $go-secondary-dark;
+}
+
+@media print
+{
+  #wrapper.toggle {
+    padding-left: 0;
+  }
+  .no-print, .no-print * {
+    display: none !important;
+  }
+}
