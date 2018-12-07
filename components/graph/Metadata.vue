@@ -115,7 +115,7 @@ export default{
     },
     createResponsiveComponent () {
       let { width, data, container } = this
-      let height = 140
+      let height = 180
 
       let svg = container.selectAll('svg.metadata').data([null])
       svg = svg
@@ -131,7 +131,8 @@ export default{
         { name: 'gnomad', y: 35 },
         { name: 'dbSnp', y: 65 },
         { name: 'clinvar', y: 95 },
-        { name: 'cosmic', y: 125 }
+        { name: 'cosmic', y: 125 },
+        { name: 'dbptm', y: 155 },
       ]
 
       let createLeftDBTitle = this.createLeftDBTitle

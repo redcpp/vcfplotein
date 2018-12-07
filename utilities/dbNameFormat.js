@@ -4,5 +4,6 @@ export default (dbName) => {
   if (dbName.includes('dbsnp')) return 'dbSNP'
   if (dbName.includes('clinvar')) return 'ClinVar'
   if (dbName.includes('cosmic')) return 'COSMIC'
+  if (dbName.includes('dbptm')) return 'dpPTM'
   throw Error(`db name not found: ${dbName}`)
 }

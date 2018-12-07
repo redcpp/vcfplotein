@@ -99,7 +99,7 @@
         return this.proteinBarY + this.proteinHeight
       },
       grouperHeight () {
-        return this.metadataY + 140
+        return this.metadataY + 180
       }
     },
     methods: {
