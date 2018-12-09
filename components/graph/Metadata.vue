@@ -132,7 +132,7 @@ export default{
         { name: 'dbSnp', y: 65 },
         { name: 'clinvar', y: 95 },
         { name: 'cosmic', y: 125 },
-        { name: 'dbptm', y: 155 },
+        // { name: 'dbptm', y: 155 },
       ]
 
       let createLeftDBTitle = this.createLeftDBTitle
