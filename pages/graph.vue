@@ -91,18 +91,18 @@
         return false
       },
     },
+    beforeMount () {
+      this.clearFilter()
+      if (this.myFile) {
+        this.selectDataSource(this.$route.query.gene)
+      }
+    },
     mounted () {
       this.$bus.$on('fullscreen', (data) => {
         if (this.$refs['fullscreen']) {
           this.$refs['fullscreen'].toggle()
         }
       })
-    },
-    beforeMount () {
-      this.clearFilter()
-      if (this.myFile) {
-        this.selectDataSource(this.$route.query.gene)
-      }
     },
     beforeRouteUpdate (to, from, next) {
       console.log('From:', from.query.gene)

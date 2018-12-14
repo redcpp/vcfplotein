@@ -49,6 +49,7 @@
         clearAllData: 'clearAllData',
       })
     },
+    // Before app is fully loaded
     beforeMount () {
       this.clearAllData()
       if (this.$route.query && this.$route.query.demo) {

@@ -20,7 +20,9 @@ export default {
   data: () => ({
     loaded: false
   }),
+  // After app is fully loaded
   mounted () {
+    // After next render (ala Frame Per Second)
     this.$nextTick(() => {
       this.loaded = true
     })

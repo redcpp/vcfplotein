@@ -3,7 +3,7 @@ import assert from 'assert'
 
 import Extractor from '~/store/classes/Extractor'
 
-const URL_API = (process.env.URL_API|| 'http://132.248.248.111') + ':8080'
+const URL_API = (process.env.URL_API|| '//132.248.248.111') + ':8080'
 console.log('API URL:', URL_API)
 const URL_37 = '//grch37.rest.ensembl.org'
 const URL_38 = '//rest.ensembl.org'
