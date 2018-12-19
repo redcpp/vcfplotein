@@ -37,7 +37,7 @@
       },
       downloadSvg () {
         let svg= document.getElementById('SvgGrouper')
-        this.saveSvg(svg, `plotein_${this.myInfo.name}`)
+        this.saveSvg(svg, `plotein_${this.myInfo.name}.svg`)
       }
     }
   }

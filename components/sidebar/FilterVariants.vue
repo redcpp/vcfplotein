@@ -21,8 +21,8 @@
   const list = [
     {title: 'Filter by consequences', key: 'consequences'},
     {title: 'Filter by clinical', key: 'clinical'},
-    {title: 'Filter by prediction', key: 'prediction'},
-    {title: 'Filter by population', key: 'population'}
+    // {title: 'Filter by prediction', key: 'prediction'},
+    // {title: 'Filter by population', key: 'population'}
   ]
 
   export default {
