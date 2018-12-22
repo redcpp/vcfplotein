@@ -8,8 +8,7 @@
       <p>Drag your files here or click in this area.</p>
     </b-file>
     <small class="text-muted">
-      Compressed files (.vcf.gz) work when their size is less than ~500MB.<br/>
-      Otherwise, please upload an uncompressed file (.vcf)
+      At this time VCF/Plotein only works with uncompressed .vcf files<br/>
     </small>
     <div class="mt-3">
       Selected file:<br>
