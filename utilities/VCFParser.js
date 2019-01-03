@@ -139,15 +139,18 @@ export const readVCFVariants = (path, gene) => {
 }
 
 const ungzip = (buffer) => {
-  return new Promise((resolve, reject) => {
-    zlib.gunzip(buffer, function(err, dezipped) {
-      if (err) {
-        console.error(err)
-        return
-      }
-      resolve(dezipped.toString())
-    })
-  })
+  const inflator = new pako.Inflate({to:'string'})
+  for (var i = 0; i < buffer.length; i += 16384) {
+    if((i + 16384) >= buffer.length){
+      inflator.push(buffer.subarray(i, i + 16384), true);
+    } else {
+      inflator.push(buffer.subarray(i, i + 16384), false);
+    }
+  }
+  if (inflator.err) {
+    throw new Error(inflator.err);
+  }
+  return inflator.result
 }
 
 // READ FILE
@@ -165,7 +168,10 @@ export const readFileAsText = (inputFile) => {
     temporaryFileReader.onload = () => {
       let contents = temporaryFileReader.result
       if (isCompressed) {
-        contents = ungzip(new Uint8Array(contents))
+        const arr = new Uint8Array(contents)
+        console.log(arr.length)
+        contents = ungzip(arr)
+        console.log(contents.length)
       }
       resolve(contents)
     }
