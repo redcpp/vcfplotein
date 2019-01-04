@@ -8,40 +8,6 @@ console.log('API URL:', URL_API)
 const URL_37 = '//grch37.rest.ensembl.org'
 const URL_38 = '//rest.ensembl.org'
 
-const DUMMY_INSERTION = {
-  id: 10000,
-  chr: '7',
-  pos: '124532327',
-  ref: 'G',
-  alt: 'C',
-  aa_pos: 30,
-  aa_change: 'R/D',
-  consequences: ['missense_variant'],
-  samples: [],
-  gnomAD: false,
-  dbSNP: false,
-  clinvar: false,
-  cosmic: false,
-  type: 'insertion'
-}
-
-const DUMMY_DELETION = {
-  id: 9999,
-  chr: '7',
-  pos: '124532327',
-  ref: 'G',
-  alt: 'C',
-  aa_pos: 55,
-  aa_change: 'D/R',
-  consequences: ['missense_variant'],
-  samples: [],
-  gnomAD: false,
-  dbSNP: false,
-  clinvar: false,
-  cosmic: false,
-  type: 'deletion'
-}
-
 export default class Api {
   constructor (version) {
     assert([37,38].includes(version), `Version received is not 37 nor 38: (${version})`)
@@ -119,13 +85,14 @@ export default class Api {
 
   fetchVariantsAndConsequences (info, vcf_vars) {
     return new Promise(async (resolve, reject) => {
+      console.log('Formating lines')
       let lines = this._formatLines(vcf_vars)
-      console.log('format lines ready')
+      console.log('Fetching ensembl in chunks')
       let rest_vars = await this._fetchChunks(info, lines)
-      console.log('fetch chunks ready')
       // Important to extract samples info from vcf_vars
       // as rest_vars comes without samples
       this.extractor.sampledict = vcf_vars
+      console.log('Extracting vars and cons')
       let obj = this._obtainVarsConsInsDels(rest_vars)
       resolve(obj)
     })
@@ -133,17 +100,19 @@ export default class Api {
 
   _fetchChunks (info, lines) {
     return new Promise(async (resolve, reject) => {
-      let newList = []
+      let requests = []
       while (lines.length > 0) {
         let chunk = lines.splice(0, this.chunk_size)
         let post_content = {
           variants: chunk,
           transcript_id: info.transcript_id
         }
-        let data = await this._fetchChunk(chunk, post_content)
-        newList.push(...data)
+        let req = this._fetchChunk(chunk, post_content)
+        requests.push(req);
       }
-      resolve(newList)
+      requests = await Promise.all(requests)
+      const merge = [].concat(...requests)
+      resolve(merge)
     })
   }
 
@@ -159,7 +128,6 @@ export default class Api {
     return new Promise(async (resolve, reject) => {
       let url = `${this.api_url}/variant-information`
       let {data} = await axios.post(url, variants, {responseType: 'json', crossdomain: true})
-      console.log('data', data[0])
       resolve(data)
     })
   }
