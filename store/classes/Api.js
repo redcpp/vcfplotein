@@ -3,7 +3,7 @@ import assert from 'assert'
 
 import Extractor from '~/store/classes/Extractor'
 
-const URL_API = (process.env.URL_API|| 'https://vcfplotein.liigh.unam.mx') + ':8181'
+const URL_API = (process.env.URL_API || 'https://vcfplotein.liigh.unam.mx') + ':8181'
 console.log('API URL:', URL_API)
 const URL_37 = '//grch37.rest.ensembl.org'
 const URL_38 = '//rest.ensembl.org'
@@ -127,7 +127,11 @@ export default class Api {
   _fetchDBPresence (variants) {
     return new Promise(async (resolve, reject) => {
       let url = `${this.api_url}/variant-information`
-      let {data} = await axios.post(url, variants, {responseType: 'json', crossdomain: true})
+      let post_content = {
+        variants: variants,
+        version: this.version,
+      }
+      let {data} = await axios.post(url, post_content, {responseType: 'json', crossdomain: true})
       resolve(data)
     })
   }

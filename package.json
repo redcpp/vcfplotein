@@ -9,7 +9,7 @@
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate",
-    "local": "API='http://localhost' npm run dev",
+    "local": "URL_API='http://localhost' npm run serve",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "serve": "node --max-old-space-size=3072 ./serve.js",
     "precommit": "npm run lint"
@@ -30,7 +30,7 @@
     "js-priority-queue": "^0.1.5",
     "json2csv": "^4.2.1",
     "nuxt": "^1.0.0",
-    "pako": "^1.0.6",
+    "pako": "^1.0.7",
     "save-svg-as-png": "^1.4.6",
     "vue-faq-accordion": "^1.2.1",
     "vue-fullscreen": "^2.1.3"
