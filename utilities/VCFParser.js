@@ -139,18 +139,7 @@ export const readVCFVariants = (path, gene) => {
 }
 
 const ungzip = (buffer) => {
-  const inflator = new pako.Inflate({to:'string'})
-  for (var i = 0; i < buffer.length; i += 16384) {
-    if((i + 16384) >= buffer.length){
-      inflator.push(buffer.subarray(i, i + 16384), true);
-    } else {
-      inflator.push(buffer.subarray(i, i + 16384), false);
-    }
-  }
-  if (inflator.err) {
-    throw new Error(inflator.err);
-  }
-  return inflator.result
+  return pako.inflate(buffer, { to: 'string' });
 }
 
 // READ FILE

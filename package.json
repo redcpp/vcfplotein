@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.2.0",
+    "@gmod/bgzf-filehandle": "^1.2.2",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "bootstrap": "4.1.1",
@@ -30,7 +31,7 @@
     "js-priority-queue": "^0.1.5",
     "json2csv": "^4.2.1",
     "nuxt": "^1.0.0",
-    "pako": "^1.0.7",
+    "pako": "github:onecodex/pako#master",
     "save-svg-as-png": "^1.4.6",
     "vue-faq-accordion": "^1.2.1",
     "vue-fullscreen": "^2.1.3"
