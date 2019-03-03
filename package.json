@@ -35,6 +35,7 @@
     "save-svg-as-png": "^1.4.6",
     "vue-faq-accordion": "^1.2.1",
     "vue-fullscreen": "^2.1.3",
+    "vue-notification": "^1.3.16",
     "vue-tour": "^1.1.0"
   },
   "devDependencies": {

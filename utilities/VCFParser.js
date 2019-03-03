@@ -109,7 +109,7 @@ const obtainsGeneInLine = (line) => {
 // READERS
 
 export const readVCFGenes = (path) => {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     console.time('readfile')
     const fileContents = await readFileAsText(path)
     console.timeEnd('readfile')
@@ -118,10 +118,14 @@ export const readVCFGenes = (path) => {
     let genes = []
     let version = 37
     for (var i = 0; i < allLines.length; i++) {
-      let gene = obtainsGeneInLine(allLines[i])
-      if (gene) {
-        if (gene.version) version = gene.version
-        else genes.push(gene)
+      try {
+        let gene = obtainsGeneInLine(allLines[i])
+        if (gene) {
+          if (gene.version) version = gene.version
+          else genes.push(gene)
+        }
+      } catch (err) {
+        reject(err);
       }
     }
     resolve({genes, version})

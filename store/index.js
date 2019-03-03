@@ -252,10 +252,9 @@ export const actions = {
 
     console.time('parsefile')
     let res = await VCFParser.readVCFGenes(state.file)
-    console.timeEnd('parsefile')
-
     let genes = res.genes
     let version = res.version
+    console.timeEnd('parsefile')
 
     console.time('getintersection')
     genes = await GeneTree.positionToName({genes, version})

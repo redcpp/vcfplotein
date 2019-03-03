@@ -2,6 +2,7 @@
   <div id="default-wrapper" v-if="loaded">
     <navbar />
     <nuxt/>
+    <notifications />
   </div>
   <div class="row h-100 justify-content-center align-items-center" v-else>
     <spinner />
