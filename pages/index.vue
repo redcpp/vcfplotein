@@ -32,22 +32,35 @@
       </a>
     </div>
     <div id="v-step-0">A DOM element on your page. The first step will pop on this element because its ID is 'v-step-0'.</div>
-    <v-tour name="myTour" :steps="steps"></v-tour>
+    <template v-if="doDemo">
+      <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks"></v-tour>
+    </template>
   </div>
 </template>
 
 <script>
+  const STEPS = [
+    {
+      target: '#v-step-0',
+      content: `Discover <strong>Vue Tour</strong>!`
+    }
+  ]
+
   export default {
     data: () => ({
-      steps: [
-        {
-          target: '#v-step-0',
-          content: `Discover <strong>Vue Tour</strong>!`
-        }
-      ]
+      steps: STEPS,
+      doDemo: true,
+      myCallbacks: {
+        onStart: this.myCustomOnStop,
+      },
     }),
+    methods: {
+      myCustomOnStop () {
+        console.log('removing')
+        // this.doDemo = false
+      }
+    },
     mounted () {
-      console.log('tours:', this.$tours['myTour'])
       this.$tours['myTour'].start()
     }
   }

@@ -28,7 +28,7 @@
                 <span class="custom-control-indicator"></span>
               </label>
             </td>
-            <td>
+            <td :title="dom.name" data-toggle="tooltip" data-placement="top">
               {{dom.family}}
               <span class="muted">({{dom.start}}, {{dom.end}})</span>
             </td>

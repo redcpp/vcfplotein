@@ -24,7 +24,9 @@
             <print />
           </b-nav-item>
           <b-nav-item @click="toggleFlipped">
-            <i class="fa fa-code-branch" v-if="myFlipped"></i>
+            <i class="fa fa-code-branch" v-if="myFlipped"
+              title="Change to table view"
+              data-toggle="tooltip"></i>
             <i class="fa fa-table" v-else></i>
           </b-nav-item>
           <b-nav-item @click="toggleFullscreen">
