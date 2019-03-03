@@ -193,6 +193,7 @@ export default class Api {
 
   async _obtainVarsConsInsDels (info, rest_vars) {
     let variants = []
+    let consequences = []
     let splice_variants = []
 
     for (const v of rest_vars) {
