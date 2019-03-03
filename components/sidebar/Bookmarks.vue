@@ -29,7 +29,7 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex'
-  import { saveAs } from 'file-saver/FileSaver';
+  import { saveAs } from 'file-saver';
 
   export default {
     computed: {

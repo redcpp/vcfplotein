@@ -33,7 +33,7 @@
     </div>
     <div id="v-step-0">A DOM element on your page. The first step will pop on this element because its ID is 'v-step-0'.</div>
     <template v-if="doDemo">
-      <v-tour name="myTour" :steps="steps" :callbacks="myCallbacks"></v-tour>
+      <v-tour name="myTour" :steps="steps"></v-tour>
     </template>
   </div>
 </template>
@@ -50,9 +50,6 @@
     data: () => ({
       steps: STEPS,
       doDemo: true,
-      myCallbacks: {
-        onStart: this.myCustomOnStop,
-      },
     }),
     methods: {
       myCustomOnStop () {

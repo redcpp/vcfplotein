@@ -29,7 +29,7 @@
       :domainScale="domainScale"
       :proteinAASize="proteinAASize"
       :width="width" />
-    <metadata
+    <Metadata
       :y="metadataY"
       :data="data"
       :width="width"
@@ -68,7 +68,7 @@
       Lollipops,
       DomainsExpanded,
       ProteinBar,
-      Metadata
+      Metadata,
     },
     data: () => ({
       data: [],

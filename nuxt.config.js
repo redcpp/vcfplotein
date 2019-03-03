@@ -37,7 +37,7 @@ module.exports = {
     mode: 'hash',
   },
   build: {
-    vendor: ['vue-fullscreen'],
+    // vendor: ['vue-fullscreen'],
     extend (config, { isDev, isClient }) {
       config.plugins = config.plugins.filter((plugin) => plugin.constructor.name !== 'UglifyJsPlugin')
       if (isDev && isClient) {

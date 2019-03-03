@@ -11,7 +11,7 @@
 
 <script>
   import { mapGetters } from 'vuex'
-  import { saveAs } from 'file-saver/FileSaver';
+  import { saveAs } from 'file-saver';
 
   const json2csv = require('json2csv').parse
 

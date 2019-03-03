@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { saveAs } from 'file-saver/FileSaver';
 
 import Api from '~/store/classes/Api'
 

@@ -68,8 +68,6 @@
   import FilterVariants from '~/components/sidebar/FilterVariants'
   import FilterSamples from '~/components/sidebar/FilterSamples'
   import Bookmarks from '~/components/sidebar/Bookmarks'
-  import DownloadCsv from '~/components/sidebar/DownloadCsv'
-  import Print from '~/components/sidebar/Print'
 
   const items = [
     {fa: 'upload', title: 'Upload vcf/bookmark'},
@@ -95,8 +93,6 @@
       FilterVariants,
       FilterSamples,
       Bookmarks,
-      DownloadCsv,
-      Print
     },
     computed: {
       ...mapGetters({
