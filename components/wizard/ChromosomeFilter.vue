@@ -56,7 +56,4 @@
   max-height: 300px;
   overflow-y: auto;
 }
-.list-group-item.active {
-  color: black;
-}
 </style>

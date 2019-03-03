@@ -125,7 +125,7 @@ export const readVCFGenes = (path) => {
           else genes.push(gene)
         }
       } catch (err) {
-        reject(err);
+        reject(err)
       }
     }
     resolve({genes, version})

@@ -204,7 +204,12 @@ export const actions = {
     commit('setSpinner', true)
     console.time('fetchAllData')
 
-    let info = await API.fetchInfo(gene)
+    let info
+    try {
+      info = await API.fetchInfo(gene)
+    } catch (err) {
+      console.log('WTF')
+    }
     if (state.transcripts.length === 0
       || state.info.id !== gene.id) {
       commit('setTranscripts', await API.fetchTranscripts(info))

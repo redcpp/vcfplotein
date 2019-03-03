@@ -2,7 +2,6 @@
   <base-titled-section title="Transcripts">
     <b-list-group v-for="transcript_id in myTranscripts" :key="transcript_id">
       <b-list-group-item
-        style="color:rgb(33, 37, 41);"
         active-class="router-link-active"
         :class="{
           active: (transcript_id === myInfo.transcript_id),

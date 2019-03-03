@@ -13,10 +13,7 @@
   justify-content: center;
 }
 
-$sidebar-width: 50px;
-$sidebar-extra-width: 350px;
-$navbar-height: 40px;
-
+@import './_theme.scss'; // theme must go before bootstrap
 
 @import '~bootstrap/scss/bootstrap';
 @import './_light.scss';

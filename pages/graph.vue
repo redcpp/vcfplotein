@@ -79,7 +79,7 @@
         if (this.myIsBookmark) {
           this.chooseGene(currentGene)
         } else {
-          this.fetchAllData(currentGene)
+          this.fetchAllData(currentGene).catch(this.fetchingError)
         }
       },
       objIsNotEmpty (obj) {
@@ -90,6 +90,14 @@
         }
         return false
       },
+      fetchingError (err) {
+        console.warn(err)
+        this.$notify({
+          title: 'Network error.',
+          text: 'Problem retrieving data from external databases.',
+          type: 'error',
+        })
+      }
     },
     beforeMount () {
       this.clearFilter()

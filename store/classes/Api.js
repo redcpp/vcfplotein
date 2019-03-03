@@ -43,96 +43,132 @@ export default class Api {
 
   fetchDemo (gene) {
     return new Promise(async (resolve, reject) => {
-      let url = `${this.api_url}/demo`
-      let {data} = await axios.get(url, {responseType: 'json', crossdomain: true})
-      resolve(data)
+      try {
+        let url = `${this.api_url}/demo`
+        let {data} = await axios.get(url, {responseType: 'json', crossdomain: true})
+        resolve(data)
+      } catch (err) {
+        reject(err)
+      }
     })
   }
 
   fetchInfo (gene) {
     return new Promise(async (resolve, reject) => {
-      let url = `${this.ensembl_url}/lookup/id/${gene.id}?content-type=application/json;expand=1`
-      let {data} = await axios.get(url, {responseType: 'json', crossdomain: true})
-      let info = this.extractor.parseInfo(data, gene.transcript_id)
-      resolve(Object.assign({}, gene, info))
+      try {
+        let url = `${this.ensembl_url}/lookup/id/${gene.id}?content-type=application/json;expand=1`
+        let {data} = await axios.get(url, {responseType: 'json', crossdomain: true})
+        let info = this.extractor.parseInfo(data, gene.transcript_id)
+        resolve(Object.assign({}, gene, info))
+      } catch (err) {
+        reject(err)
+      }
     })
   }
 
   fetchDomains (info) {
     return new Promise(async (resolve, reject) => {
-      let url = `${this.ensembl_url}/overlap/translation/${info.protein_id}?content-type=application/json`
-      let {data} = await axios.get(url, {responseType: 'json', crossdomain: true})
-      let domains = this.extractor.parseDomains(data)
-      resolve(domains)
+      try {
+        let url = `${this.ensembl_url}/overlap/translation/${info.protein_id}?content-type=application/json`
+        let {data} = await axios.get(url, {responseType: 'json', crossdomain: true})
+        let domains = this.extractor.parseDomains(data)
+        resolve(domains)
+      } catch (err) {
+        reject(err)
+      }
     })
   }
 
   fetchTranscripts (info) {
     return new Promise(async (resolve, reject) => {
-      let url = `${this.api_url}/transcripts/37/${info.name}`
-      let {data} = await axios.get(url, {responseType: 'json', crossdomain: true})
-      resolve(data)
+      try {
+        let url = `${this.api_url}/transcripts/37/${info.name}`
+        let {data} = await axios.get(url, {responseType: 'json', crossdomain: true})
+        resolve(data)
+      } catch (err) {
+        reject(err)
+      }
     })
   }
 
   fetchGoterms (genes) {
     return new Promise(async (resolve, reject) => {
-      let url = `${this.api_url}/goterm-filters`
-      let {data} = await axios.post(url, genes, {responseType: 'json', crossdomain: true})
-      resolve(data)
+      try {
+        let url = `${this.api_url}/goterm-filters`
+        let {data} = await axios.post(url, genes, {responseType: 'json', crossdomain: true})
+        resolve(data)
+      } catch (err) {
+        reject(err)
+      }
     })
   }
 
   fetchVariantsAndConsequences (info, vcf_vars) {
     return new Promise(async (resolve, reject) => {
-      console.log('Formating lines')
-      let lines = this._formatLines(vcf_vars)
-      console.log('Fetching ensembl in chunks')
-      let rest_vars = await this._fetchChunks(info, lines)
-      // Important to extract samples info from vcf_vars
-      // as rest_vars comes without samples
-      this.extractor.sampledict = vcf_vars
-      console.log('Extracting vars and cons')
-      let obj = this._obtainVarsConsInsDels(rest_vars)
-      resolve(obj)
+      try {
+        console.log('Formating lines')
+        let lines = this._formatLines(vcf_vars)
+        console.log('Fetching ensembl in chunks')
+        let rest_vars = await this._fetchChunks(info, lines)
+        // Important to extract samples info from vcf_vars
+        // as rest_vars comes without samples
+        this.extractor.sampledict = vcf_vars
+        console.log('Extracting vars and cons')
+        let obj = this._obtainVarsConsInsDels(rest_vars)
+        resolve(obj)
+      } catch (err) {
+        reject(err)
+      }
     })
   }
 
   _fetchChunks (info, lines) {
     return new Promise(async (resolve, reject) => {
-      let requests = []
-      while (lines.length > 0) {
-        let chunk = lines.splice(0, this.chunk_size)
-        let post_content = {
-          variants: chunk,
-          transcript_id: info.transcript_id
+      try {
+        let requests = []
+        while (lines.length > 0) {
+          let chunk = lines.splice(0, this.chunk_size)
+          let post_content = {
+            variants: chunk,
+            transcript_id: info.transcript_id
+          }
+          let req = this._fetchChunk(chunk, post_content)
+          requests.push(req);
         }
-        let req = this._fetchChunk(chunk, post_content)
-        requests.push(req);
+        requests = await Promise.all(requests)
+        const merge = [].concat(...requests)
+        resolve(merge)
+      } catch (err) {
+        reject(err)
       }
-      requests = await Promise.all(requests)
-      const merge = [].concat(...requests)
-      resolve(merge)
     })
   }
 
   _fetchChunk (chunk, post_content) {
     return new Promise(async (resolve, reject) => {
-      let url = `${this.ensembl_url}/vep/homo_sapiens/region`
-      let {data} = await axios.post(url, post_content, {responseType: 'json', crossdomain: true})
-      resolve(data)
+      try {
+        let url = `${this.ensembl_url}/vep/homo_sapiens/region`
+        let {data} = await axios.post(url, post_content, {responseType: 'json', crossdomain: true})
+        resolve(data)
+      } catch (err) {
+        reject(err)
+      }
     })
   }
 
   _fetchDBPresence (variants) {
     return new Promise(async (resolve, reject) => {
-      let url = `${this.api_url}/variant-information`
-      let post_content = {
-        variants: variants,
-        version: this.version,
+      try {
+        let url = `${this.api_url}/variant-information`
+        let post_content = {
+          variants: variants,
+          version: this.version,
+        }
+        let {data} = await axios.post(url, post_content, {responseType: 'json', crossdomain: true})
+        resolve(data)
+      } catch (err) {
+        reject(err)
       }
-      let {data} = await axios.post(url, post_content, {responseType: 'json', crossdomain: true})
-      resolve(data)
     })
   }
 
