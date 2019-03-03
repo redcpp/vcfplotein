@@ -114,7 +114,7 @@ export default class Api {
         // as rest_vars comes without samples
         this.extractor.sampledict = vcf_vars
         console.log('Extracting vars and cons')
-        let obj = this._obtainVarsConsInsDels(rest_vars)
+        let obj = this._obtainVarsConsInsDels(info, rest_vars)
         resolve(obj)
       } catch (err) {
         reject(err)
@@ -172,13 +172,28 @@ export default class Api {
     })
   }
 
+  _fetchSplice (info, variants) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        let url = `${this.api_url}/splice-variants`
+        let post_content = {
+          variants: variants,
+          transcript_id: transcript_id,
+          gene_id: gene_id,
+        }
+        let {data} = await axios.post(url, post_content, {responseType: 'json', crossdomain: true})
+        resolve(data)
+      } catch (err) {
+        reject(err)
+      }
+    })
+  }
+
   // HELPERS
 
-  async _obtainVarsConsInsDels (rest_vars) {
+  async _obtainVarsConsInsDels (info, rest_vars) {
     let variants = []
-    let deletions = []
-    let insertions = []
-    let consequences = []
+    let splice_variants = []
 
     for (const v of rest_vars) {
       if (!v.transcript_consequences) {continue}
@@ -189,7 +204,10 @@ export default class Api {
           newVariant.type = 'insertion'
         } else if (newVariant.ref.length > newVariant.alt.length) {
           newVariant.type = 'deletion'
+        } else if (!newVariant.aa_pos) {
+          splice_variants.push(newVariant)
         }
+
         if (newVariant.aa_pos && newVariant.aa_change) {
           variants.push(newVariant)
           consequences.push(...t.consequence_terms)
@@ -198,12 +216,16 @@ export default class Api {
       }
     }
 
+    splice_variants = await this._fetchSplice(
+      info, this.extractor.nonConfidentialInfo(splice_variants))
+    variants.push(...splice_variants)
+
     let non_confidential = this.extractor.nonConfidentialInfo(variants)
     let db_presence = await this._fetchDBPresence(non_confidential)
     variants = this.extractor.mergeVariantsAndDb(variants, db_presence)
 
     consequences = this.extractor.parseConsequences(consequences)
-    return {variants, deletions, insertions, consequences }
+    return { variants, consequences }
   }
 
   _formatLines (vcf_vars) {

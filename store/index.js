@@ -23,8 +23,6 @@ const BASE_STATE = {
   transcripts: [],
   // Variants, domains and consequences
   variants: [],
-  insertions: [],
-  deletions: [],
   domains: [],
   consequences: [],
   // Extra
@@ -57,8 +55,6 @@ export const getters = {
   getGoterms: (state) => (state.goterms),
   getTranscripts: (state) => (state.transcripts),
   getVariants: (state) => (state.variants),
-  getInsertions: (state) => (state.insertions),
-  getDeletions: (state) => (state.deletions),
   getDomains: (state) => (state.domains),
   getConsequences: (state) => (state.consequences),
   getSpinner: (state) => (state.spinner),
@@ -84,15 +80,11 @@ export const getters = {
   getAllTranscript: (state, getters) => ({
     info: getters.getInfo,
     variants: getters.getVariants,
-    insertions: getters.getInsertions,
-    deletions: getters.getDeletions,
     domains: getters.getDomains,
     consequences: getters.getConsequences
   }),
   getMutations: (state, getters) => ([
     ...getters.getStatusVariants,
-    ...getters.getInsertions,
-    ...getters.getDeletions
   ].sort(sortByProteinPos)),
   getSamples: (state, getters) => {
     let samples = []
@@ -148,8 +140,6 @@ export const mutations = {
   setGoterms: (state, goterms) => {state.goterms = goterms},
   setTranscripts: (state, transcripts) => {state.transcripts = transcripts},
   setVariants: (state, variants) => {state.variants = variants.sort(sortByProteinPos)},
-  setInsertions: (state, insertions) => {state.insertions = insertions},
-  setDeletions: (state, deletions) => {state.deletions = deletions},
   setDomains: (state, domains) => {state.domains = domains},
   setConsequences: (state, consequences) => {state.consequences = consequences},
   setSpinner: (state, spinner) => {state.spinner = spinner},
@@ -186,8 +176,6 @@ export const actions = {
   },
   clearAllGene ({commit}) {
     commit('setVariants', [])
-    commit('setInsertions', [])
-    commit('setDeletions', [])
     commit('setDomains', [])
     commit('setConsequences', [])
     commit('setVariant', {})
@@ -231,8 +219,6 @@ export const actions = {
         console.timeEnd('fetchVarsAndCons')
 
         commit('setVariants', obj.variants)
-        commit('setInsertions', obj.insertions)
-        commit('setDeletions', obj.deletions)
         commit('setConsequences', obj.consequences)
       } catch (error) {
         console.error('Error fetching variants', error)
@@ -376,8 +362,6 @@ export const actions = {
     console.log('selectedTranscript:', currentTranscript)
     commit('setInfo', currentTranscript.info)
     commit('setVariants', currentTranscript.variants)
-    commit('setInsertions', currentTranscript.insertions)
-    commit('setDeletions', currentTranscript.deletions)
     commit('setDomains', currentTranscript.domains)
     commit('setConsequences', currentTranscript.consequences)
   },
