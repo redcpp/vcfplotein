@@ -178,12 +178,13 @@ export default class Api {
         let url = `${this.api_url}/splice-variants`
         let post_content = {
           variants: variants,
-          transcript_id: transcript_id,
-          gene_id: gene_id,
+          transcript_id: info.transcript_id,
+          gene_id: info.id,
         }
         let {data} = await axios.post(url, post_content, {responseType: 'json', crossdomain: true})
         resolve(data)
       } catch (err) {
+        console.warn(err)
         reject(err)
       }
     })
@@ -205,7 +206,8 @@ export default class Api {
           newVariant.type = 'insertion'
         } else if (newVariant.ref.length > newVariant.alt.length) {
           newVariant.type = 'deletion'
-        } else if (!newVariant.aa_pos) {
+        } else if (!newVariant.aa_pos
+            && newVariant.consequences.includes('splice_acceptor_variant')) {
           splice_variants.push(newVariant)
         }
 
@@ -217,8 +219,8 @@ export default class Api {
       }
     }
 
-    splice_variants = await this._fetchSplice(
-      info, this.extractor.nonConfidentialInfo(splice_variants))
+    splice_variants = await this._fetchSplice(info, splice_variants)
+    console.log('splice variants:', splice_variants)
     variants.push(...splice_variants)
 
     let non_confidential = this.extractor.nonConfidentialInfo(variants)
