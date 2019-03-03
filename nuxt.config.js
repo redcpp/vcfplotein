@@ -24,10 +24,10 @@ module.exports = {
   ],
   plugins: [
     { src: '~/plugins/vue-fullscreen', ssr: false },
+    { src: '~/plugins/notifications.js', ssr: false },
     { src: '~/plugins/tours.js' },
     { src: '~/plugins/global.js' },
     { src: '~/plugins/eventBus.js' },
-    { src: '~/plugins/notifications.js' }
   ],
   loading: { color: '#fff' },
   env: {
