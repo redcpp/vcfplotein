@@ -31,5 +31,24 @@
         <p class="display-2"><i class="fa fa-file-pdf"></i></p>
       </a>
     </div>
+    <div id="v-step-0">A DOM element on your page. The first step will pop on this element because its ID is 'v-step-0'.</div>
+    <v-tour name="myTour" :steps="steps"></v-tour>
   </div>
 </template>
+
+<script>
+  export default {
+    data: () => ({
+      steps: [
+        {
+          target: '#v-step-0',
+          content: `Discover <strong>Vue Tour</strong>!`
+        }
+      ]
+    }),
+    mounted () {
+      console.log('tours:', this.$tours['myTour'])
+      this.$tours['myTour'].start()
+    }
+  }
+</script>

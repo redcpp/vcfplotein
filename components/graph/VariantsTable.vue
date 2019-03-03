@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-table show-empty striped responsive bordered hover
+    <b-table show-empty striped responsive bordered hover caption-top
       :fields="fields"
       :items="variants"
       :current-page="currentPage"
@@ -12,6 +12,9 @@
       </template>
       <template slot="samples" slot-scope="data">
         {{data.value.map(d => d.name).join(', ')}}
+      </template>
+      <template slot="table-caption">
+        Variants in graph
       </template>
     </b-table>
     <b-pagination

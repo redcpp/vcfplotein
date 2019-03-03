@@ -4,6 +4,10 @@ import Colorgorical from '~/utilities/colorgorical'
 import ColorsGoogle10 from '~/utilities/colorsGoogle10'
 
 export default class Extractor {
+  constructor () {
+    this.colorOf = {count:0};
+  }
+
   set sampledict (vcf_vars) {
     this.samplesOf = {}
     this.counter = 0
@@ -44,7 +48,7 @@ export default class Extractor {
         start: d.start,
         end: d.end,
         family: d.id,
-        color: Colorgorical[i % Colorgorical.length],
+        color: this._getColor(d.id),
         status: d.id.startsWith('PF')
       })
     }
@@ -132,5 +136,14 @@ export default class Extractor {
       dict[dbs.id] = dbs
     }
     return dict
+  }
+
+  _getColor (name) {
+    if (!this.colorOf.hasOwnProperty(name)) {
+      let pos = this.colorOf.count % Colorgorical.length
+      this.colorOf[name] = Colorgorical[pos]
+      this.colorOf.count += 1
+    }
+    return this.colorOf[name]
   }
 }

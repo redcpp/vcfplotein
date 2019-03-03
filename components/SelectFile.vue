@@ -7,9 +7,6 @@
       class="drag-drop d-flex align-items-stretch">
       <p>Drag your files here or click in this area.</p>
     </b-file>
-    <small class="text-muted">
-      At this time VCF/Plotein only works with uncompressed .vcf files<br/>
-    </small>
     <div class="mt-3">
       Selected file:<br>
       <span class="font-weight-bold">

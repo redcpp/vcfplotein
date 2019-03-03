@@ -24,6 +24,7 @@ module.exports = {
   ],
   plugins: [
     { src: '~/plugins/vue-fullscreen', ssr: false },
+    { src: '~/plugins/tours.js' },
     { src: '~/plugins/global.js' },
     { src: '~/plugins/eventBus.js' }
   ],

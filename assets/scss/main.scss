@@ -53,6 +53,10 @@ code {
   color: $go-secondary-dark;
 }
 
+#tabla caption {
+  text-align: center;
+}
+
 @media print
 {
   #wrapper.toggle {
