@@ -30,7 +30,6 @@ export default class Api {
   }
 
   get version () {
-    console.log('cur version', this._version)
     return this._version
   }
 
@@ -180,6 +179,7 @@ export default class Api {
           variants: variants,
           transcript_id: info.transcript_id,
           gene_id: info.id,
+          version: this.version,
         }
         let {data} = await axios.post(url, post_content, {responseType: 'json', crossdomain: true})
         resolve(data)
