@@ -222,6 +222,11 @@ export default class Api {
     splice_variants = await this._fetchSplice(info, splice_variants)
     console.log('splice variants:', splice_variants)
     variants.push(...splice_variants)
+    splice_variants.forEach(v => {
+      v.aa_change = ''
+      consequences.push(...v.consequences)
+      consequences = [... new Set(consequences)]
+    })
 
     let non_confidential = this.extractor.nonConfidentialInfo(variants)
     let db_presence = await this._fetchDBPresence(non_confidential)
