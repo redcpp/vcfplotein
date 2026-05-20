@@ -16,7 +16,7 @@ A **Vue 3** web application for the clinical interpretation of genetic variants 
 
 ## Published research
 
-VCF/Plotein is a peer-reviewed clinical genomics tool I helped build at the **Cancer Genetics & Bioinformatics Lab, LIIGH-UNAM** (Laboratorio Internacional de Investigación sobre el Genoma Humano, Universidad Nacional Autónoma de México), Querétaro, Mexico. It was published in *Bioinformatics* (Oxford University Press) in 2019 as part of a collaborative lab project.
+VCF/Plotein is a peer-reviewed clinical genomics tool I developed at the **Cancer Genetics & Bioinformatics Lab, LIIGH-UNAM** (Laboratorio Internacional de Investigación sobre el Genoma Humano, Universidad Nacional Autónoma de México), Querétaro, Mexico. The accompanying research was published in *Bioinformatics* (Oxford University Press) in 2019.
 
 > Ossio, R., Garcia-Salinas, O.I., **Anaya-Mancilla, D.S.**, Garcia-Sotelo, J.S., Aguilar, L.A., Adams, D.J., Robles-Espinoza, C.D. (2019). **VCF/Plotein: visualization and prioritization of genomic variants from human exome sequencing projects.** *Bioinformatics*, 35(22), 4803–4805. Oxford University Press. DOI: [10.1093/bioinformatics/btz458](https://doi.org/10.1093/bioinformatics/btz458)
 
@@ -117,9 +117,11 @@ The BAP1 demo dataset rendered as an interactive D3.js lollipop plot — variant
 
 Precision medicine depends on turning raw sequencing data into interpretable insights. By visualizing how exome variants map to protein structure and combining them with clinical and pathogenicity databases, this tool reduces the manual burden on molecular biologists and supports faster, more informed clinical decisions.
 
-## Author & contributions
+## Author
 
-VCF/Plotein was a collaborative project of the **Cancer Genetics & Bioinformatics Lab at LIIGH-UNAM**. **Diego Said Anaya-Mancilla** contributed as one of the developers of the tool, working on the web application within the lab team. The original project was a team effort that resulted in the 2019 *Bioinformatics* publication; credit for the tool belongs to the lab and its contributors collectively, not to any single author. The 2026 modernization to a Vue 3 / Vite stack (this `modernized` branch) is later, independent work on the codebase.
+The VCF/Plotein web application — its interface, data visualization and architecture — was designed and written by **[Diego Said Anaya-Mancilla](https://github.com/redcpp)**. The original 2018–2019 implementation and the 2026 ground-up rewrite to a modern Vue 3 / Vite stack (documented above) are both his work.
+
+The application was developed at the **Cancer Genetics & Bioinformatics Lab, LIIGH-UNAM** (Querétaro, Mexico), where the surrounding research was carried out and published in *Bioinformatics* (2019) — see [Published research](#published-research). That publication is credited to the full lab team.
 
 ## License
 
