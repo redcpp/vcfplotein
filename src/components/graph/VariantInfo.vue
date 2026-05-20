@@ -1,35 +1,43 @@
 <template>
-  <section>
+  <section class="px-4 py-4">
     <p class="eyebrow">Variant</p>
 
     <dl class="mt-2 divide-y divide-border">
-      <div class="flex items-baseline justify-between gap-3 py-1.5">
-        <dt class="text-xs text-ink-3">Chromosome</dt>
-        <dd class="font-mono text-sm text-ink">{{ main.getVariant.chr }}</dd>
+      <div class="flex items-baseline gap-3 py-1.5">
+        <dt class="shrink-0 text-xs text-ink-3">Chromosome</dt>
+        <dd class="min-w-0 flex-1 break-words text-right font-mono text-sm text-ink">
+          {{ main.getVariant.chr }}
+        </dd>
       </div>
-      <div class="flex items-baseline justify-between gap-3 py-1.5">
-        <dt class="text-xs text-ink-3">Genomic position</dt>
-        <dd class="font-mono text-sm text-ink">{{ main.getVariant.pos }}</dd>
+      <div class="flex items-baseline gap-3 py-1.5">
+        <dt class="shrink-0 text-xs text-ink-3">Genomic position</dt>
+        <dd class="min-w-0 flex-1 break-words text-right font-mono text-sm text-ink">
+          {{ main.getVariant.pos }}
+        </dd>
       </div>
-      <div class="flex items-baseline justify-between gap-3 py-1.5">
-        <dt class="text-xs text-ink-3">Protein position</dt>
-        <dd class="font-mono text-sm text-ink">{{ main.getVariant.aa_pos }}</dd>
+      <div class="flex items-baseline gap-3 py-1.5">
+        <dt class="shrink-0 text-xs text-ink-3">Protein position</dt>
+        <dd class="min-w-0 flex-1 break-words text-right font-mono text-sm text-ink">
+          {{ main.getVariant.aa_pos }}
+        </dd>
       </div>
-      <div class="flex items-baseline justify-between gap-3 py-1.5">
-        <dt class="text-xs text-ink-3">Allele change</dt>
-        <dd class="font-mono text-sm text-ink">
+      <div class="flex items-baseline gap-3 py-1.5">
+        <dt class="shrink-0 text-xs text-ink-3">Allele change</dt>
+        <dd class="min-w-0 flex-1 break-words text-right font-mono text-sm text-ink">
           {{ main.getVariant.ref }}
           <span class="text-ink-4">&rarr;</span>
           {{ main.getVariant.alt }}
         </dd>
       </div>
-      <div class="flex items-baseline justify-between gap-3 py-1.5">
-        <dt class="text-xs text-ink-3">Aminoacid change</dt>
-        <dd class="font-mono text-sm text-ink">{{ main.getVariant.aa_change }}</dd>
+      <div class="flex items-baseline gap-3 py-1.5">
+        <dt class="shrink-0 text-xs text-ink-3">Aminoacid change</dt>
+        <dd class="min-w-0 flex-1 break-words text-right font-mono text-sm text-ink">
+          {{ main.getVariant.aa_change || '—' }}
+        </dd>
       </div>
     </dl>
 
-    <div class="mt-3">
+    <div class="mt-3.5">
       <p class="eyebrow">Consequences</p>
       <ul class="mt-1.5 flex flex-wrap gap-1.5">
         <li
