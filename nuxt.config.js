@@ -11,7 +11,7 @@ module.exports = {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/Plotein.png?v2' },
-      { rel: 'stylesheet', href: 'https://rawgithub.com/Caged/d3-tip/master/examples/example-styles.css' }
+      { rel: 'stylesheet', href: 'https://raw.githack.com/Caged/d3-tip/master/examples/example-styles.css' }
     ]
   },
   css: [

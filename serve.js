@@ -8,7 +8,7 @@ app.use(bodyParser.json())
 
 // Sessions to create req.session
 app.use(session({
-  secret: 'super-secret-key',
+  secret: process.env.SESSION_SECRET || 'change-me-in-production',
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 60000 }

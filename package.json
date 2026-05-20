@@ -1,9 +1,26 @@
 {
-  "name": "plotein",
+  "name": "vcfplotein",
   "version": "1.0.0",
-  "description": "Protein visualization",
+  "description": "Clinical genomics web app to visualize and prioritize exome VCF variants on protein structures",
   "author": "Diego Said Anaya Mancilla <redcpp@gmail.com>",
-  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/redcpp/vcfplotein"
+  },
+  "homepage": "http://vcfplotein.liigh.unam.mx",
+  "keywords": [
+    "bioinformatics",
+    "genomics",
+    "vcf",
+    "exome-sequencing",
+    "variant-visualization",
+    "clinical-genetics",
+    "nuxt",
+    "vue",
+    "d3",
+    "protein-structure"
+  ],
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
