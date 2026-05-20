@@ -1,23 +1,35 @@
 # VCF/Plotein
 
-A Nuxt.js web application for the clinical interpretation of genetic variants from exome sequencing VCF files. It maps raw genomic variants onto protein structures so clinicians and researchers can visually assess pathogenicity, functional impact, and clinical relevance.
+A **Vue 3** web application for the clinical interpretation of genetic variants from exome sequencing VCF files. It maps raw genomic variants onto protein structures so clinicians and researchers can visually assess pathogenicity, functional impact, and clinical relevance.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](#license)
 [![Published in Bioinformatics 2019](https://img.shields.io/badge/Published-Bioinformatics%202019-b31b1b.svg)](https://academic.oup.com/bioinformatics/article/35/22/4803/5510555)
 [![DOI](https://img.shields.io/badge/DOI-10.1093%2Fbioinformatics%2Fbtz458-1f6feb.svg)](https://doi.org/10.1093/bioinformatics/btz458)
-[![Nuxt 2](https://img.shields.io/badge/Nuxt-2-00C58E.svg)](https://v2.nuxt.com/)
-[![Vue 2](https://img.shields.io/badge/Vue-2-42b883.svg)](https://v2.vuejs.org/)
-[![D3 v5](https://img.shields.io/badge/D3-v5-f9a03c.svg)](https://d3js.org/)
+[![Vue 3](https://img.shields.io/badge/Vue-3-42b883.svg)](https://vuejs.org/)
+[![Vite](https://img.shields.io/badge/Vite-5-646cff.svg)](https://vite.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38bdf8.svg)](https://tailwindcss.com/)
+[![D3 v7](https://img.shields.io/badge/D3-v7-f9a03c.svg)](https://d3js.org/)
 
-**[Live demo](http://vcfplotein.liigh.unam.mx)** (hosted by LIIGH-UNAM) &nbsp;·&nbsp; **[Published in Bioinformatics (2019)](https://academic.oup.com/bioinformatics/article/35/22/4803/5510555)** &nbsp;·&nbsp; **[Open-access full text (PMC)](https://pmc.ncbi.nlm.nih.gov/articles/PMC6853650/)**
+**[Published in Bioinformatics (2019)](https://academic.oup.com/bioinformatics/article/35/22/4803/5510555)** &nbsp;·&nbsp; **[Open-access full text (PMC)](https://pmc.ncbi.nlm.nih.gov/articles/PMC6853650/)** &nbsp;·&nbsp; **[Original instance (LIIGH-UNAM)](http://vcfplotein.liigh.unam.mx)**
 
-![VCF/Plotein — variant visualization web application](static/Plotein.png)
+![VCF/Plotein — BAP1 variant lollipop plot with clinical database tracks](public/screenshot.png)
 
 ## Published research
 
-VCF/Plotein is a peer-reviewed clinical genomics tool I helped build at the **Cancer Genetics & Bioinformatics Lab, LIIGH-UNAM** (Laboratorio Internacional de Investigación sobre el Genoma Humano, Universidad Nacional Autónoma de México), Querétaro, Mexico. It was published in *Bioinformatics* (Oxford University Press) in 2019 as part of a collaborative lab project. The work below is the result of a multi-developer team effort within the lab.
+VCF/Plotein is a peer-reviewed clinical genomics tool I helped build at the **Cancer Genetics & Bioinformatics Lab, LIIGH-UNAM** (Laboratorio Internacional de Investigación sobre el Genoma Humano, Universidad Nacional Autónoma de México), Querétaro, Mexico. It was published in *Bioinformatics* (Oxford University Press) in 2019 as part of a collaborative lab project.
 
 > Ossio, R., Garcia-Salinas, O.I., **Anaya-Mancilla, D.S.**, Garcia-Sotelo, J.S., Aguilar, L.A., Adams, D.J., Robles-Espinoza, C.D. (2019). **VCF/Plotein: visualization and prioritization of genomic variants from human exome sequencing projects.** *Bioinformatics*, 35(22), 4803–4805. Oxford University Press. DOI: [10.1093/bioinformatics/btz458](https://doi.org/10.1093/bioinformatics/btz458)
+
+## About this branch — 2026 modernization
+
+The original tool was built in 2018–2019 on **Nuxt 2 / Vue 2 / Webpack / node-sass / Bootstrap-Vue** — a toolchain that no longer installs or builds on a current Node.js. This `modernized` branch brings the codebase up to a present-day front-end stack while preserving the application's behavior and look:
+
+- **Nuxt 2 / Vue 2 → Vue 3 + Vite 5** — Composition API with `<script setup>`; dev server cold-start ~0.2s.
+- **Vuex → Pinia**, **Nuxt file-routing → Vue Router 4**.
+- **node-sass → Tailwind CSS v4** — the UI chrome rebuilt with Tailwind; native Sass compilation removed.
+- **Bootstrap-Vue → hand-rolled Tailwind components** (data table, pagination, file input).
+- **D3 v5 → D3 v7** — including the v6 event-handler API change across the lollipop renderer.
+- **Expired-certificate proxy** for the companion backend — see [Architecture highlights](#architecture-highlights).
 
 ## Why VCF matters
 
@@ -36,68 +48,55 @@ The Variant Call Format (VCF) is the standard file for storing DNA sequence vari
 
 ## Tech stack
 
-- **Framework:** Nuxt.js 2 (Vue 2, Vuex, client-side routing)
-- **UI:** Bootstrap-Vue, SCSS, FontAwesome
-- **Visualization:** D3.js v5 (lollipop plots, protein domains, interactive tips)
-- **Build & serve:** Node.js, Express, `serve.js` for production
-- **Utilities:** `html2canvas`, `save-svg-as-png`, `file-saver`, `json2csv`, `pako` (gzip)
+- **Framework:** Vue 3 (Composition API, `<script setup>`)
+- **Build tool:** Vite 5
+- **State & routing:** Pinia, Vue Router 4
+- **Styling:** Tailwind CSS v4
+- **Visualization:** D3.js v7 (lollipop plots, protein domains, database tracks)
+- **Production server:** zero-dependency Node.js server (`server/index.js`) — static host + API proxy
+- **Genomics utilities:** `pako` (gzip), `@gmod/bgzf-filehandle`, an interval-tree gene mapper
 
-## Key features
-
-- In-browser VCF/VCF.gz parsing (no server upload required for raw data)
-- Automatic reference genome detection (GRCh37/GRCh38)
-- Interactive protein lollipop chart with zoom and domain highlighting
-- Per-variant clinical metadata: ClinVar significance, COSMIC, dbSNP, gnomAD
-- Functional impact: SIFT and PolyPhen scores
-- Sample-level filtering for multi-sample VCFs
-- Bookmarking system to save and reload analysis sessions
-- Demo mode with pre-loaded BAP1 data
-- Guided UI tour and responsive layout
-
-## Technical highlights & decisions
+## Architecture highlights
 
 - **Raw genomic data never leaves the browser.** VCF and gzipped `.vcf.gz` files are decompressed and parsed entirely client-side with `pako` — a deliberate privacy choice, since exome data is PHI and clinical labs should not have to upload it to a third party.
-- **Interval-tree gene mapping.** Variant positions are matched to coding genes by inserting all GRCh37/GRCh38 genes into a lazily-built interval tree and querying by point, with a priority queue assisting coordinate partitioning (`utilities/GeneTree.js`, `utilities/intervalPartition.js`). This keeps per-variant lookups fast across exomes with tens of thousands of variants.
-- **D3.js v5 lollipop rendering.** Variants are drawn as interactive lollipops positioned along the protein sequence and overlaid on annotated protein domains, with zoom, tooltips, and SVG/PNG export.
-- **Hash-mode routing for static institutional hosting.** The router runs in `hash` mode (`nuxt.config.js`) so the app can be served as static files from UNAM infrastructure without server-side rewrite rules.
-- **Node heap tuning for large exomes.** The production server is launched with `--max-old-space-size=3072` to handle the memory footprint of large variant sets and the in-memory gene reference data.
-- **API URL injected at build time.** The companion annotation backend endpoint is provided via the `URL_API` environment variable, allowing the same build to target local or institutional backends.
+- **Companion-backend proxy.** The variant-database lookups (ClinVar/COSMIC/dbSNP/gnomAD) are served by a backend at LIIGH-UNAM whose TLS certificate has expired, which browsers refuse to call directly. The app instead requests a relative `/api/*` path; both the Vite dev server and the production Node server (`server/index.js`) reverse-proxy those calls to the upstream, transparently bypassing the expired certificate. The browser only ever talks to a valid-certificate origin.
+- **Lazy-loaded gene reference data.** The GRCh37/38 gene coordinate tables (~13 MB) are code-split into a separate chunk that loads only when a raw VCF actually needs gene mapping — keeping the initial bundle around 370 KB.
+- **Interval-tree gene mapping.** Variant positions are matched to coding genes via a lazily-built interval tree, with a priority queue assisting coordinate partitioning — fast per-variant lookups across exomes with tens of thousands of variants.
+- **D3 v7 lollipop rendering.** Variants are drawn along the protein sequence and overlaid on annotated protein domains, with keyboard navigation, hover tooltips, and SVG/PNG export.
 
 ## Running locally
 
-> **Toolchain caveat — read first.** This project was built in 2018–2019 for the Node 10–12 era. It depends on `node-sass@4.x` and Nuxt 2.4, which do **not** install or build cleanly on modern Node (24+) without a legacy toolchain or container (e.g. Node 12 via `nvm`, or a Docker image pinned to that era). The live demo and its companion annotation backend are institutionally hosted at LIIGH-UNAM, so running locally is only needed for development on the original toolchain.
-
 ```bash
-# Install dependencies (requires Node 10–12 era toolchain)
 npm install
 
-# Development server with hot reload at localhost:3000
-npm run dev
-
-# Production build & serve
-npm run build
-npm start
-
-# Or use the Express wrapper (heap-tuned for large exomes)
-npm run serve
-
-# Static generation
-npm run generate
+npm run dev      # Vite dev server with hot reload at localhost:3000
+npm run build    # production build → dist/
+npm start        # serve dist/ + proxy /api → node server/index.js
+npm run lint     # ESLint
 ```
 
-> **Note:** The app queries the Ensembl REST API and a companion backend for annotations. Some features require network access.
+No special toolchain is required — the project builds on current Node.js. In development, the Vite dev server proxies `/api/*` to the LIIGH-UNAM companion backend automatically; the Ensembl REST API is called directly.
+
+## Deployment
+
+The production artifact is the `dist/` build served by `server/index.js` — a zero-dependency Node server that serves the SPA and reverse-proxies `/api/*` to the companion backend. Deploy to any Node host (Railway, Render, Fly.io):
+
+- **Build command:** `npm run build`
+- **Start command:** `npm start`
+
+The server reads `PORT` from the environment.
+
+## Sample data
+
+`public/bap1-sample.vcf` is a small BAP1 variant set for trying the upload flow. The built-in **Demo** button loads a pre-computed BAP1 dataset with no file needed.
 
 ## Screenshots
 
-The BAP1 demo dataset rendered as an interactive D3.js lollipop plot — the tool's marquee output, showing variants mapped onto the protein's domains:
+The BAP1 demo dataset rendered as an interactive D3.js lollipop plot — variants mapped onto the protein's domains, with ClinVar / COSMIC / dbSNP / gnomAD presence tracks:
 
-![BAP1 variant lollipop plot rendered by VCF/Plotein](static/bap1.png)
+![BAP1 variant lollipop plot rendered by VCF/Plotein](public/screenshot.png)
 
-VCF/Plotein application branding:
-
-![VCF/Plotein branding](static/Plotein.png)
-
-> A full interactive walkthrough is available on the **[live demo](http://vcfplotein.liigh.unam.mx)**. Note: the demo is hosted by UNAM and its HTTPS certificate may trigger a browser warning — this is expected and not a sign of a compromised site.
+![BAP1 protein lollipop detail](public/bap1.png)
 
 ## Why this project matters
 
@@ -105,7 +104,7 @@ Precision medicine depends on turning raw sequencing data into interpretable ins
 
 ## Author & contributions
 
-VCF/Plotein was a collaborative project of the **Cancer Genetics & Bioinformatics Lab at LIIGH-UNAM**. **Diego Said Anaya-Mancilla** contributed as one of the developers of the tool, working on the web application within the lab team. The project was a team effort that resulted in the 2019 *Bioinformatics* publication; credit for the tool belongs to the lab and its contributors collectively, not to any single author.
+VCF/Plotein was a collaborative project of the **Cancer Genetics & Bioinformatics Lab at LIIGH-UNAM**. **Diego Said Anaya-Mancilla** contributed as one of the developers of the tool, working on the web application within the lab team. The original project was a team effort that resulted in the 2019 *Bioinformatics* publication; credit for the tool belongs to the lab and its contributors collectively, not to any single author. The 2026 modernization to a Vue 3 / Vite stack (this `modernized` branch) is later, independent work on the codebase.
 
 ## License
 

@@ -1,0 +1,33 @@
+/*
+ * D3 / SVG visualization styles — PLAIN CSS, intentionally NOT inside a
+ * Tailwind layer. This keeps these rules out of reach of Tailwind's preflight
+ * reset so the D3 tooltip and SVG wrapper render correctly.
+ *
+ * Ported from assets/scss/_utils.scss (.d3-tip) and the <style> block of
+ * components/graph/SvgGrouper.vue. Later migration phases extend this file.
+ */
+
+/* d3-tip tooltip (replaces the old raw.githack d3-tip example stylesheet). */
+.d3-tip {
+  color: #000;
+  background-color: rgba(240, 240, 240, 0.8);
+  border: solid 1px #ccc;
+  box-shadow:
+    0 5px 20px 0 rgba(62, 57, 107, 0.07),
+    0 1px 5px 0 rgba(62, 57, 107, 0.06);
+  line-height: 1;
+  padding: 8px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* SvgGrouper wrapper — the scrollable SVG container for the lollipop plot. */
+#SvgGrouper {
+  width: 100%;
+  display: block;
+  overflow-x: auto;
+}
+
+#SvgGrouper > svg {
+  display: block;
+}

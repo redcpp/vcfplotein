@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+/*
+ * Brand design tokens — Tailwind CSS v4 CSS-first config.
+ * Ported from assets/scss/_theme.scss and _colors.scss.
+ * These generate utilities like `bg-go-primary`, `text-go-secondary`, etc.
+ */
+@theme {
+  --color-go-primary: #263238;
+  --color-go-primary-light: #4f5b62;
+  --color-go-primary-dark: #000a12;
+
+  --color-go-secondary: #ff6b00;
+  --color-go-secondary-light: #ff9c40;
+  --color-go-secondary-dark: #c43a00;
+
+  --color-go-charcoal: #212121;
+
+  /* Fonts — loaded via Google Fonts <link> in index.html. */
+  --font-sans: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+  --font-raleway: "Raleway", ui-sans-serif, system-ui, sans-serif;
+  --font-montserrat: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Quicksand is the global font. */
+html,
+body {
+  font-family: var(--font-sans);
+}
