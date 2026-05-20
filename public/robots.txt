@@ -1,0 +1,8 @@
+# robots.txt — VCF/Plotein
+# A free, open-source clinical genomics web app. All crawlers are welcome,
+# including search-engine and AI/LLM crawlers.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://vcfplotein-production.up.railway.app/sitemap.xml

@@ -107,7 +107,8 @@ const PAD_R = 24
 const PAD_T = 30          // headroom above the axis (also clears tilted labels)
 const AXIS_H = 30         // amino-acid position axis
 const LABEL_BAND_H = 56   // reserved strip for tilted variant labels
-const LOLLI_H = 150       // variant lollipop band (heads + stems)
+const LOLLI_TIER_H = 30   // vertical step between sample-count tiers
+const LOLLI_BASE_H = 60   // lollipop band height when only one tier is used
 const BACKBONE_H = 34     // gap between backbone and the domain rows
 const DOMAIN_ROW_H = 22   // height of one packed domain row
 const DOMAIN_GAP = 30     // gap between the domain rows and the db tracks
@@ -146,7 +147,7 @@ const axisY = PAD_T
 const labelBandTop = computed(() => axisY + AXIS_H)
 // The lollipop heads/stems sit below the label strip.
 const lolliTop = computed(() => labelBandTop.value + LABEL_BAND_H)
-const backboneY = computed(() => lolliTop.value + LOLLI_H)
+const backboneY = computed(() => lolliTop.value + lolliBand.value)
 const domainsTop = computed(() => backboneY.value + BACKBONE_H)
 // Caption strip above the database tracks.
 const dbHeadY = computed(
@@ -163,6 +164,22 @@ const innerRight = computed(() => width.value - PAD_R)
 
 // Computed mutation positions (non-overlapping x via calculatePositions).
 const data = ref([])
+
+// Heads step up one tier per order-of-magnitude of sample count. Size the
+// lollipop band to the tallest tier actually present so sparse datasets
+// (every variant in one sample) don't leave a tall empty gap above the plot.
+const maxSampleLevel = computed(() => {
+  let max = 0
+  for (const d of data.value) {
+    const n = (d.samples || []).length
+    const lvl = Math.min(3, Math.floor(Math.log10(Math.max(1, n))))
+    if (lvl > max) max = lvl
+  }
+  return max
+})
+const lolliBand = computed(
+  () => LOLLI_BASE_H + maxSampleLevel.value * LOLLI_TIER_H
+)
 
 // Base scale: amino-acid coordinate → x pixel. Zoom rescales this.
 const baseScale = computed(() =>
@@ -304,10 +321,15 @@ function drawDefs () {
   const clip = defs.selectAll('#vp-clip').data([null])
   const clipEnter = clip.enter().append('clipPath').attr('id', 'vp-clip')
   clipEnter.append('rect')
+  // The clip keeps markers from spilling over the left track-label gutter, but
+  // it must not bisect the circle of the first or last variant. Bleed left by
+  // a marker's radius (+halo) and extend right to the SVG edge — the right
+  // padding (PAD_R) is blank space, so a full end circle has room to render.
+  const bleed = props.radius + 6
   clipEnter.merge(clip).select('rect')
-    .attr('x', innerLeft.value)
+    .attr('x', innerLeft.value - bleed)
     .attr('y', 0)
-    .attr('width', Math.max(0, innerRight.value - innerLeft.value))
+    .attr('width', Math.max(0, width.value - (innerLeft.value - bleed)))
     .attr('height', grouperHeight.value)
 }
 
@@ -345,19 +367,6 @@ function drawAxis (xScale, t) {
   g.selectAll('line')
     .attr('class', 'vp-axis-tick')
     .attr('stroke', PALETTE.borderStrong)
-
-  // Axis caption.
-  const cap = svg.value.selectAll('text.vp-axis-cap').data([null])
-  cap.enter().append('text')
-    .attr('class', 'vp-axis-cap')
-    .attr('fill', PALETTE.ink3)
-    .attr('font-family', '"IBM Plex Mono", ui-monospace, monospace')
-    .attr('font-size', 10)
-    .attr('font-weight', 600)
-    .merge(cap)
-    .attr('x', 8)
-    .attr('y', axisY + AXIS_H - 8)
-    .text('aa')
 }
 
 function drawGuides (t) {
@@ -488,7 +497,7 @@ function drawLollipops (xScale, markerX, t) {
   // Sample-count drives head height up the band (log10 buckets). The band is
   // LOLLI_H tall; heads step up in even tiers and never reach the label strip.
   const lvl = d => Math.min(3, Math.floor(Math.log10(Math.max(1, (d.samples || []).length))))
-  const headY = d => backboneY.value - 30 - lvl(d) * 30
+  const headY = d => backboneY.value - LOLLI_TIER_H - lvl(d) * LOLLI_TIER_H
 
   const items = g.selectAll('g.vp-lolli').data(data.value, d => d.id)
   items.exit().transition(t).style('opacity', 0).remove()

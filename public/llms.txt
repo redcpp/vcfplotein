@@ -1,0 +1,29 @@
+# VCF/Plotein
+
+> VCF/Plotein is a free, open-source, browser-based clinical genomics tool that visualizes and prioritizes genomic variants from human exome sequencing (VCF files). It maps variants onto protein domains as an interactive lollipop plot and shows each variant's presence across the ClinVar, COSMIC, dbSNP and gnomAD databases.
+
+VCF/Plotein is peer-reviewed software, published in *Bioinformatics* (Oxford University Press) in 2019. It was built at the Cancer Genetics & Bioinformatics Lab, LIIGH-UNAM (Laboratorio Internacional de Investigación sobre el Genoma Humano, Universidad Nacional Autónoma de México), in Querétaro, Mexico.
+
+VCF files are parsed locally in the browser. A typical workflow: upload a VCF file (or load the built-in BAP1 demo dataset), filter by chromosome / gene / GO term, pick a gene and protein transcript, then explore its variants on an interactive protein plot. Results can be exported as SVG, PNG or CSV.
+
+## Features
+
+- Interactive lollipop plot mapping variants onto protein domains, colored by predicted consequence (missense, frameshift, synonymous, stop-gained, splice variants, and more).
+- Database-presence tracks showing whether each variant appears in ClinVar, COSMIC, dbSNP and gnomAD.
+- Variant prioritization by predicted clinical consequence and database evidence.
+- Supports the GRCh37 and GRCh38 human genome assemblies.
+- Client-side VCF parsing (plain and bgzipped); gene and transcript lookup via the Ensembl REST API.
+- Export of the protein plot and variant tables to SVG, PNG and CSV.
+
+## Links
+
+- [Live demo](https://vcfplotein-production.up.railway.app)
+- [Publication in Bioinformatics (2019)](https://academic.oup.com/bioinformatics/article/35/22/4803/5510555)
+- [Open-access full text (PMC)](https://pmc.ncbi.nlm.nih.gov/articles/PMC6853650/)
+- [DOI: 10.1093/bioinformatics/btz458](https://doi.org/10.1093/bioinformatics/btz458)
+- [Source code (GitHub)](https://github.com/redcpp/vcfplotein)
+- [Original instance (LIIGH-UNAM)](http://vcfplotein.liigh.unam.mx)
+
+## Citation
+
+Ossio, R., Garcia-Salinas, O.I., Anaya-Mancilla, D.S., Garcia-Sotelo, J.S., Aguilar, L.A., Adams, D.J., Robles-Espinoza, C.D. (2019). VCF/Plotein: visualization and prioritization of genomic variants from human exome sequencing projects. *Bioinformatics*, 35(22), 4803–4805. Oxford University Press.

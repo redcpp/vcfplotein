@@ -3,19 +3,107 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>VCF/Plotein — visualize &amp; prioritize exome VCF variants on protein structures</title>
     <meta
       name="description"
-      content="VCF/Plotein - clinical genomics web app to visualize and prioritize exome VCF variants on protein structures."
+      content="VCF/Plotein is a free, browser-based clinical genomics tool that visualizes and prioritizes genomic variants from human exome sequencing (VCF files). It maps variants onto protein domains as an interactive lollipop plot with ClinVar, COSMIC, dbSNP and gnomAD presence tracks. Peer-reviewed, published in Bioinformatics (Oxford University Press, 2019)."
     />
+    <meta
+      name="keywords"
+      content="VCF, exome sequencing, variant visualization, clinical genomics, lollipop plot, protein domains, ClinVar, COSMIC, dbSNP, gnomAD, bioinformatics, variant prioritization"
+    />
+    <meta name="author" content="Diego Said Anaya-Mancilla; Cancer Genetics & Bioinformatics Lab, LIIGH-UNAM" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <meta name="theme-color" content="#f3f5f8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="canonical" href="https://vcfplotein-production.up.railway.app/" />
+
+    <!-- Icons — derived from the official VCF/Plotein logo -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="VCF/Plotein" />
+    <meta property="og:title" content="VCF/Plotein — clinical variant interpretation" />
+    <meta
+      property="og:description"
+      content="Visualize and prioritize genomic variants from human exome sequencing (VCF) on protein structures — an interactive lollipop plot with ClinVar, COSMIC, dbSNP and gnomAD presence tracks."
+    />
+    <meta property="og:url" content="https://vcfplotein-production.up.railway.app/" />
+    <meta property="og:image" content="https://vcfplotein-production.up.railway.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="The VCF/Plotein clinical genomics interface showing a BAP1 variant lollipop plot with protein domains and database-presence tracks."
+    />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="VCF/Plotein — clinical variant interpretation" />
+    <meta
+      name="twitter:description"
+      content="Visualize and prioritize genomic variants from human exome sequencing (VCF) on protein structures, with ClinVar / COSMIC / dbSNP / gnomAD presence tracks."
+    />
+    <meta name="twitter:image" content="https://vcfplotein-production.up.railway.app/og-image.png" />
+    <meta
+      name="twitter:image:alt"
+      content="The VCF/Plotein clinical genomics interface showing a BAP1 variant lollipop plot."
+    />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <title>VCF/Plotein — clinical variant interpretation</title>
+
+    <!-- Structured data — helps search engines and LLM crawlers describe the app accurately -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "VCF/Plotein",
+        "alternateName": "VCF Plotein",
+        "url": "https://vcfplotein-production.up.railway.app/",
+        "applicationCategory": "HealthApplication",
+        "applicationSubCategory": "Bioinformatics",
+        "operatingSystem": "Any (web browser)",
+        "browserRequirements": "Requires a modern web browser with JavaScript enabled",
+        "description": "VCF/Plotein is a free, browser-based clinical genomics tool that visualizes and prioritizes genomic variants from human exome sequencing (VCF files). It maps variants onto protein domains as an interactive D3 lollipop plot and shows presence across the ClinVar, COSMIC, dbSNP and gnomAD variant databases.",
+        "image": "https://vcfplotein-production.up.railway.app/og-image.png",
+        "inLanguage": "en",
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "license": "https://opensource.org/licenses/MIT",
+        "keywords": "VCF, exome sequencing, variant visualization, clinical genomics, lollipop plot, protein domains, ClinVar, COSMIC, dbSNP, gnomAD",
+        "creator": {
+          "@type": "Organization",
+          "name": "Cancer Genetics & Bioinformatics Lab, LIIGH-UNAM",
+          "url": "http://vcfplotein.liigh.unam.mx"
+        },
+        "citation": {
+          "@type": "ScholarlyArticle",
+          "name": "VCF/Plotein: visualization and prioritization of genomic variants from human exome sequencing projects",
+          "headline": "VCF/Plotein: visualization and prioritization of genomic variants from human exome sequencing projects",
+          "datePublished": "2019",
+          "isPartOf": {
+            "@type": "Periodical",
+            "name": "Bioinformatics",
+            "publisher": "Oxford University Press"
+          },
+          "sameAs": "https://doi.org/10.1093/bioinformatics/btz458"
+        }
+      }
+    </script>
   </head>
   <body>
     <div id="app"></div>

@@ -240,7 +240,6 @@
 
 /* ----------------------------------------------------- svg: chrome text --- */
 .vp-band-label,
-.vp-axis-cap,
 .vp-axis-label,
 .vp-sep {
   pointer-events: none;
