@@ -10,7 +10,7 @@ A **Vue 3** web application for the clinical interpretation of genetic variants 
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38bdf8.svg)](https://tailwindcss.com/)
 [![D3 v7](https://img.shields.io/badge/D3-v7-f9a03c.svg)](https://d3js.org/)
 
-**[Published in Bioinformatics (2019)](https://academic.oup.com/bioinformatics/article/35/22/4803/5510555)** &nbsp;·&nbsp; **[Open-access full text (PMC)](https://pmc.ncbi.nlm.nih.gov/articles/PMC6853650/)** &nbsp;·&nbsp; **[Original instance (LIIGH-UNAM)](http://vcfplotein.liigh.unam.mx)**
+**[Live demo](https://vcfplotein-production.up.railway.app)** &nbsp;·&nbsp; **[Published in Bioinformatics (2019)](https://academic.oup.com/bioinformatics/article/35/22/4803/5510555)** &nbsp;·&nbsp; **[Open-access full text (PMC)](https://pmc.ncbi.nlm.nih.gov/articles/PMC6853650/)** &nbsp;·&nbsp; **[Original instance (LIIGH-UNAM)](http://vcfplotein.liigh.unam.mx)**
 
 ![VCF/Plotein — BAP1 variant lollipop plot with clinical database tracks](public/screenshot.png)
 
@@ -79,7 +79,7 @@ No special toolchain is required — the project builds on current Node.js. In d
 
 ## Deployment
 
-The production artifact is the `dist/` build served by `server/index.js` — a zero-dependency Node server that serves the SPA and reverse-proxies `/api/*` to the companion backend. Deploy to any Node host (Railway, Render, Fly.io):
+Live on Railway at **[vcfplotein-production.up.railway.app](https://vcfplotein-production.up.railway.app)**. The production artifact is the `dist/` build served by `server/index.js` — a zero-dependency Node server that serves the SPA and reverse-proxies `/api/*` to the companion backend (transparently bypassing the upstream's expired TLS certificate). Any Node host works:
 
 - **Build command:** `npm run build`
 - **Start command:** `npm start`
