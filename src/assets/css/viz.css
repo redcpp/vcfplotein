@@ -220,10 +220,28 @@
 }
 
 /* ----------------------------------------------- svg: database tracks ----- */
+.vp-dbrow-bg {
+  pointer-events: none;
+}
+.vp-dbrow-label,
+.vp-dbrow-base {
+  pointer-events: none;
+}
 .vp-dbmark {
   cursor: pointer;
   transition: filter 0.12s var(--ease-out);
 }
 .vp-dbmark:hover {
   filter: brightness(1.08);
+}
+.vp-dbmark.is-present:hover {
+  filter: brightness(1.05) saturate(1.12);
+}
+
+/* ----------------------------------------------------- svg: chrome text --- */
+.vp-band-label,
+.vp-axis-cap,
+.vp-axis-label,
+.vp-sep {
+  pointer-events: none;
 }

@@ -100,16 +100,20 @@ const svg = ref(null)
 const width = ref(900)
 
 // ---------------------------------------------------------------- layout ----
-// Track band geometry (top → bottom).
-const PAD_L = 92          // left gutter for track labels
-const PAD_R = 18
-const PAD_T = 18
-const AXIS_H = 26         // amino-acid position axis
-const LOLLI_H = 132       // variant lollipop band
-const BACKBONE_H = 16     // protein backbone + domains row spacing baseline
-const DOMAIN_ROW_H = 16   // height of one packed domain row
-const DB_ROW_H = 30       // height of one database-presence row
-const PAD_B = 16
+// Track band geometry (top → bottom). Values are tuned for a calm, generously
+// spaced default view — every band gets clear vertical separation.
+const PAD_L = 104         // left gutter for track labels
+const PAD_R = 24
+const PAD_T = 30          // headroom above the axis (also clears tilted labels)
+const AXIS_H = 30         // amino-acid position axis
+const LABEL_BAND_H = 56   // reserved strip for tilted variant labels
+const LOLLI_H = 150       // variant lollipop band (heads + stems)
+const BACKBONE_H = 34     // gap between backbone and the domain rows
+const DOMAIN_ROW_H = 22   // height of one packed domain row
+const DOMAIN_GAP = 30     // gap between the domain rows and the db tracks
+const DB_HEAD_H = 26      // "Database presence" caption strip
+const DB_ROW_H = 44       // height of one database-presence row
+const PAD_B = 24
 
 const DATABASES = [
   { key: 'clinvar', label: 'ClinVar' },
@@ -136,12 +140,19 @@ const PALETTE = {
 const groups = computed(() => intervalPartition([...props.domains]))
 const domainRows = computed(() => Math.max(1, groups.value.num))
 
-// Vertical anchors for each band.
+// Vertical anchors for each band (top → bottom).
 const axisY = PAD_T
-const lolliTop = computed(() => axisY + AXIS_H)
+// Tilted variant labels live in their own reserved strip below the axis.
+const labelBandTop = computed(() => axisY + AXIS_H)
+// The lollipop heads/stems sit below the label strip.
+const lolliTop = computed(() => labelBandTop.value + LABEL_BAND_H)
 const backboneY = computed(() => lolliTop.value + LOLLI_H)
 const domainsTop = computed(() => backboneY.value + BACKBONE_H)
-const dbTop = computed(() => domainsTop.value + domainRows.value * DOMAIN_ROW_H + 18)
+// Caption strip above the database tracks.
+const dbHeadY = computed(
+  () => domainsTop.value + domainRows.value * DOMAIN_ROW_H + DOMAIN_GAP
+)
+const dbTop = computed(() => dbHeadY.value + DB_HEAD_H)
 const grouperHeight = computed(
   () => dbTop.value + DATABASES.length * DB_ROW_H + PAD_B
 )
@@ -350,7 +361,7 @@ function drawAxis (xScale, t) {
 }
 
 function drawGuides (t) {
-  // Hairline separator above the database tracks.
+  // Hairline separator framing the database-track block.
   let line = svg.value.selectAll('line.vp-sep').data([null])
   line = line.enter().append('line')
     .attr('class', 'vp-sep')
@@ -358,20 +369,20 @@ function drawGuides (t) {
     .merge(line)
   line.transition(t)
     .attr('x1', 8).attr('x2', innerRight.value)
-    .attr('y1', dbTop.value - 9).attr('y2', dbTop.value - 9)
+    .attr('y1', dbHeadY.value).attr('y2', dbHeadY.value)
 
-  // Track-area label.
+  // Track-area caption — sits in its own strip above the tracks.
   const lbl = svg.value.selectAll('text.vp-band-label').data([null])
   lbl.enter().append('text')
     .attr('class', 'vp-band-label')
     .attr('fill', PALETTE.ink3)
     .attr('font-family', '"Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif')
-    .attr('font-size', 10)
+    .attr('font-size', 10.5)
     .attr('font-weight', 600)
-    .attr('letter-spacing', '0.06em')
+    .attr('letter-spacing', '0.08em')
     .merge(lbl)
-    .attr('x', 8).attr('y', dbTop.value + 4)
-    .text('Database presence')
+    .attr('x', 8).attr('y', dbHeadY.value + DB_HEAD_H - 8)
+    .text('DATABASE PRESENCE')
 }
 
 function drawBackbone (xScale, t) {
@@ -474,9 +485,10 @@ function drawLollipops (xScale, markerX, t) {
   g = g.enter().append('g').attr('class', 'vp-lollis')
     .attr('clip-path', 'url(#vp-clip)').merge(g)
 
-  // Sample-count drives head height up the band (log10 buckets).
+  // Sample-count drives head height up the band (log10 buckets). The band is
+  // LOLLI_H tall; heads step up in even tiers and never reach the label strip.
   const lvl = d => Math.min(3, Math.floor(Math.log10(Math.max(1, (d.samples || []).length))))
-  const headY = d => backboneY.value - 26 - lvl(d) * 22
+  const headY = d => backboneY.value - 30 - lvl(d) * 30
 
   const items = g.selectAll('g.vp-lolli').data(data.value, d => d.id)
   items.exit().transition(t).style('opacity', 0).remove()
@@ -525,7 +537,7 @@ function drawLollipops (xScale, markerX, t) {
   enter.append('text')
     .attr('class', 'vp-lolli-label')
     .attr('font-family', '"IBM Plex Mono", ui-monospace, monospace')
-    .attr('font-size', 9)
+    .attr('font-size', 9.5)
     .attr('text-anchor', 'start')
 
   const all = enter.merge(items)
@@ -559,14 +571,38 @@ function drawLollipops (xScale, markerX, t) {
     .attr('cy', d => headY(d))
     .attr('r', props.radius)
 
+  // ---- variant labels: density-aware thinning ----------------------------
+  // At the default (un-zoomed) view dense regions would collide into an
+  // unreadable mass. Rather than drawing every label, we sweep markers left
+  // → right and keep a label only when its anchor clears a minimum pixel
+  // spacing from the last kept label. The selected variant is always kept.
+  // Hidden labels stay reachable via the hover tooltip and zoom — zooming in
+  // spreads markers apart, so progressively more labels qualify.
+  const LABEL_MIN_GAP = 30
+  const sorted = data.value
+    .map(d => ({ d, x: markerX(d) }))
+    .sort((a, b) => a.x - b.x)
+  const labelVisible = {}
+  let lastLabelX = -Infinity
+  for (const { d, x } of sorted) {
+    const keep = d.id === selectedId.value || x - lastLabelX >= LABEL_MIN_GAP
+    labelVisible[d.id] = keep
+    if (keep) lastLabelX = x
+  }
+
   all.select('text.vp-lolli-label')
     .text(d => aaChangeLabel(d))
     .attr('fill', d => (isSel(d) ? PALETTE.accent : PALETTE.ink3))
     .attr('font-weight', d => (isSel(d) ? 600 : 400))
+    .attr('display', d => (labelVisible[d.id] ? null : 'none'))
     .transition(t)
-    .attr('x', d => markerX(d))
-    .attr('y', d => headY(d) - props.radius - 6)
-    .attr('transform', d => `rotate(-60 ${markerX(d)} ${headY(d) - props.radius - 6})`)
+    .attr('x', d => markerX(d) + 3)
+    .attr('y', d => headY(d) - props.radius - 7)
+    .attr('transform', d => {
+      const lx = markerX(d) + 3
+      const ly = headY(d) - props.radius - 7
+      return `rotate(-42 ${lx} ${ly})`
+    })
 }
 
 function drawDatabaseTracks (xScale, markerX, t) {
@@ -575,6 +611,9 @@ function drawDatabaseTracks (xScale, markerX, t) {
 
   const rows = g.selectAll('g.vp-dbrow').data(DATABASES, d => d.key)
   const rowEnter = rows.enter().append('g').attr('class', 'vp-dbrow')
+  // Zebra background band — makes each track easy to scan across.
+  rowEnter.append('rect')
+    .attr('class', 'vp-dbrow-bg')
   rowEnter.append('line')
     .attr('class', 'vp-dbrow-base')
     .attr('stroke', PALETTE.border)
@@ -582,14 +621,23 @@ function drawDatabaseTracks (xScale, markerX, t) {
     .attr('class', 'vp-dbrow-label')
     .attr('fill', PALETTE.ink2)
     .attr('font-family', '"IBM Plex Mono", ui-monospace, monospace')
-    .attr('font-size', 10)
+    .attr('font-size', 10.5)
     .attr('font-weight', 600)
     .attr('text-anchor', 'end')
   const rowAll = rowEnter.merge(rows)
 
   rowAll.each(function (db, rowIdx) {
     const rowG = d3.select(this)
-    const cy = dbTop.value + rowIdx * DB_ROW_H + DB_ROW_H / 2
+    const rowTop = dbTop.value + rowIdx * DB_ROW_H
+    const cy = rowTop + DB_ROW_H / 2
+
+    rowG.select('rect.vp-dbrow-bg')
+      .attr('x', 8)
+      .attr('y', rowTop)
+      .attr('width', Math.max(0, innerRight.value - 8))
+      .attr('height', DB_ROW_H)
+      .attr('rx', 7)
+      .attr('fill', rowIdx % 2 === 0 ? PALETTE.surface : '#f5f7fa')
 
     rowG.select('line.vp-dbrow-base')
       .transition(t)
@@ -598,7 +646,7 @@ function drawDatabaseTracks (xScale, markerX, t) {
 
     rowG.select('text.vp-dbrow-label')
       .attr('y', cy + 4)
-      .attr('x', PAD_L - 12)
+      .attr('x', PAD_L - 14)
       .text(dbNameFormat(db.label))
 
     // Presence marks — clipped to the protein extent.
@@ -633,7 +681,7 @@ function drawDatabaseTracks (xScale, markerX, t) {
       .transition(t)
       .attr('cx', d => markerX(d))
       .attr('cy', cy)
-      .attr('r', 5)
+      .attr('r', 5.5)
   })
 }
 

@@ -161,7 +161,13 @@ function loadSelectedGene () {
 
 function handleFullscreen () {
   if (fullscreenRef.value && typeof fullscreenRef.value.toggle === 'function') {
-    fullscreenRef.value.toggle()
+    // The Fullscreen API can throw synchronously or reject asynchronously
+    // ("Permissions check failed"); swallow both so the click never errors.
+    try {
+      Promise.resolve(fullscreenRef.value.toggle()).catch(() => {})
+    } catch {
+      /* fullscreen unavailable — ignore */
+    }
   }
 }
 

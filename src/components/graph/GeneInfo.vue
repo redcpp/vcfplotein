@@ -72,22 +72,41 @@
       </div>
 
       <div>
-        <p class="eyebrow">Base changes <span class="normal-case text-ink-4">(in graph)</span></p>
-        <div class="mt-2 grid grid-cols-4 gap-2">
-          <div
-            v-for="ref in baseRefs"
-            :key="ref.ref"
-            class="rounded-card border border-border bg-surface-2 px-2 py-1.5"
-          >
-            <p class="font-mono text-sm font-semibold text-ink">{{ ref.ref }}</p>
-            <p
-              v-for="alt in ref.alts"
-              :key="alt.base"
-              class="font-mono text-[0.6875rem] leading-tight text-ink-3"
-            >
-              {{ alt.base }} {{ alt.count }}
-            </p>
-          </div>
+        <p class="eyebrow">Base changes <span class="normal-case text-ink-4">(ref → alt)</span></p>
+        <div class="mt-2 overflow-hidden rounded-card border border-border bg-surface-2">
+          <table class="w-full border-collapse text-center font-mono text-xs">
+            <thead>
+              <tr class="text-ink-4">
+                <th class="px-2 py-1.5 font-medium"></th>
+                <th
+                  v-for="b in bases"
+                  :key="`h-${b}`"
+                  class="px-2 py-1.5 font-semibold text-ink-3"
+                >
+                  {{ b }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="row in baseMatrix"
+                :key="row.ref"
+                class="border-t border-border"
+              >
+                <th class="px-2 py-1.5 font-semibold text-ink-3">{{ row.ref }}</th>
+                <td
+                  v-for="cell in row.cells"
+                  :key="`${row.ref}-${cell.alt}`"
+                  class="px-2 py-1.5 tabular-nums"
+                  :class="cell.alt === row.ref
+                    ? 'text-ink-4'
+                    : cell.count > 0 ? 'font-semibold text-ink' : 'text-ink-4'"
+                >
+                  {{ cell.alt === row.ref ? '—' : cell.count }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -100,13 +119,16 @@ import { useMainStore } from '@/stores/main'
 
 const main = useMainStore()
 
-const baseRefs = computed(() => {
+const bases = ['A', 'G', 'C', 'T']
+
+const baseMatrix = computed(() => {
   const counts = main.getBaseCount
-  return [
-    { ref: 'A', alts: ['G', 'C', 'T'].map((b) => ({ base: b, count: counts.A[b] })) },
-    { ref: 'G', alts: ['A', 'C', 'T'].map((b) => ({ base: b, count: counts.G[b] })) },
-    { ref: 'C', alts: ['A', 'G', 'T'].map((b) => ({ base: b, count: counts.C[b] })) },
-    { ref: 'T', alts: ['A', 'C', 'G'].map((b) => ({ base: b, count: counts.T[b] })) }
-  ]
+  return bases.map((ref) => ({
+    ref,
+    cells: bases.map((alt) => ({
+      alt,
+      count: alt === ref ? 0 : counts[ref][alt]
+    }))
+  }))
 })
 </script>
