@@ -179,23 +179,14 @@ export default class Api {
     })
   }
 
-  _fetchSplice (info, variants) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let url = `${this.api_url}/splice-variants`
-        let post_content = {
-          variants: variants,
-          transcript_id: info.transcript_id,
-          gene_id: info.id,
-          version: this.version
-        }
-        let { data } = await axios.post(url, post_content, { responseType: 'json', crossdomain: true })
-        resolve(data)
-      } catch (err) {
-        console.warn(err)
-        reject(err)
-      }
-    })
+  _fetchSplice () {
+    // DISABLED: the companion /splice-variants endpoint crashes the upstream
+    // backend process on every call. That crash also takes down the request
+    // issued right after it (/variant-information) with ECONNREFUSED, so
+    // calling it is actively harmful — not just an isolated failure. Splice-
+    // acceptor annotation is an optional enrichment; skip the call until the
+    // upstream endpoint is fixed. (Original implementation is in git history.)
+    return Promise.resolve([])
   }
 
   // HELPERS
@@ -237,8 +228,14 @@ export default class Api {
     })
 
     let non_confidential = this.extractor.nonConfidentialInfo(variants)
-    let db_presence = await this._fetchDBPresence(non_confidential)
-    variants = this.extractor.mergeVariantsAndDb(variants, db_presence)
+    try {
+      let db_presence = await this._fetchDBPresence(non_confidential)
+      variants = this.extractor.mergeVariantsAndDb(variants, db_presence)
+    } catch (err) {
+      // Database-presence flags (ClinVar/COSMIC/dbSNP/gnomAD) are an optional
+      // enrichment; an unreliable backend must not blank out the whole graph.
+      console.warn('variant-information unavailable; continuing without database-presence annotations:', err.message)
+    }
 
     consequences = this.extractor.parseConsequences(consequences)
     return { variants, consequences }
