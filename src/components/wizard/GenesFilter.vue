@@ -1,34 +1,34 @@
 <template>
-  <base-titled-section title="Filter genes">
-    <ul class="mt-2 flex flex-wrap gap-1" role="tablist">
-      <li v-for="item in list" :key="item.key" role="presentation">
-        <button
-          type="button"
-          role="tab"
-          :aria-selected="cur.key === item.key"
-          class="rounded px-3 py-1.5 text-sm transition-colors"
-          :class="cur.key === item.key
-            ? 'bg-go-secondary text-white'
-            : 'text-go-primary hover:bg-gray-100'"
-          @click="setCurrent(item)"
-        >
-          {{ item.title }}
-        </button>
-      </li>
-    </ul>
+  <div>
+    <div class="grid grid-cols-2 gap-1 rounded-xl bg-surface-2 p-1" role="tablist">
+      <button
+        v-for="item in list"
+        :key="item.key"
+        type="button"
+        role="tab"
+        :aria-selected="cur.key === item.key"
+        class="t-base rounded-lg px-2 py-1.5 text-xs font-semibold"
+        :class="cur.key === item.key
+          ? 'bg-primary-soft text-primary-ink shadow-xs'
+          : 'text-ink-3 hover:bg-surface-3 hover:text-ink'"
+        @click="setCurrent(item)"
+      >
+        {{ item.title }}
+      </button>
+    </div>
 
     <div class="pt-3">
       <ChromosomeFilter v-if="cur.key === 'chr'" />
-      <div v-else-if="mySpinner" class="flex justify-center py-4">
-        <span class="inline-block h-8 w-8 animate-spin rounded-full
-                     border-4 border-go-secondary border-t-transparent"></span>
+      <div v-else-if="mySpinner" class="flex justify-center py-6">
+        <span class="inline-block h-7 w-7 animate-spin rounded-full
+                     border-2 border-primary border-t-transparent"></span>
       </div>
       <GotermsFilter v-else-if="cur.key === 'bio'" :list="bio" :title="cur.title" />
       <GotermsFilter v-else-if="cur.key === 'mol'" :list="mol" :title="cur.title" />
       <GotermsFilter v-else-if="cur.key === 'cel'" :list="cel" :title="cur.title" />
-      <p v-else>Error</p>
+      <p v-else class="py-4 text-center text-sm text-ink-3">Error</p>
     </div>
-  </base-titled-section>
+  </div>
 </template>
 
 <script setup>

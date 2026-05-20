@@ -1,21 +1,41 @@
 <template>
-  <base-titled-section :title="`Genes (${filteredGeneList.length})`">
-    <p v-if="myFilter" class="mb-0 text-go-primary-light">
-      Filtered by {{ myFilterType }} ({{ myFilter }})
-    </p>
+  <div class="card p-4">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div class="relative min-w-[14rem] flex-1">
+        <i
+          class="fas fa-search pointer-events-none absolute left-3 top-1/2
+                 -translate-y-1/2 text-sm text-ink-4"
+          aria-hidden="true"
+        ></i>
+        <input
+          v-model.trim="search"
+          type="text"
+          placeholder="Search a gene"
+          aria-describedby="inputLiveHelp inputLiveFeedback"
+          class="t-base w-full rounded-lg border border-border bg-surface py-2 pl-9
+                 pr-3 text-sm text-ink placeholder:text-ink-4 focus:border-primary
+                 focus:outline-none focus:ring-2 focus:ring-primary/20"
+        />
+      </div>
 
-    <input
-      v-model.trim="search"
-      type="text"
-      placeholder="Search a gene"
-      aria-describedby="inputLiveHelp inputLiveFeedback"
-      class="mt-2 w-full rounded border border-gray-300 px-3 py-1.5 text-sm
-             focus:border-go-secondary focus:outline-none"
-    />
+      <div class="flex items-center gap-2">
+        <span
+          v-if="myFilter"
+          class="inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-2.5
+                 py-1 text-xs font-medium text-primary-ink"
+        >
+          {{ myFilterType }}
+          <span class="font-mono">{{ myFilter }}</span>
+        </span>
+        <span class="text-xs font-medium text-ink-3">
+          {{ filteredGeneList.length }} genes
+        </span>
+      </div>
+    </div>
 
     <DataTable
       id="tabla"
-      class="mt-2"
+      class="mt-3"
       striped
       hover
       :fields="fields"
@@ -27,7 +47,8 @@
       <template #name="{ value, item }">
         <a
           href="#"
-          class="cursor-pointer text-go-secondary hover:underline"
+          class="t-base cursor-pointer font-mono font-semibold text-primary
+                 hover:text-primary-hover hover:underline"
           @click.prevent="goToGraph(item)"
         >
           {{ value }}
@@ -37,7 +58,7 @@
 
     <div
       v-show="filteredGeneList.length > props.perPage"
-      class="flex justify-center pb-5 pt-2"
+      class="flex justify-center pt-3"
     >
       <Pagination
         v-model="currentPage"
@@ -45,7 +66,7 @@
         :per-page="props.perPage"
       />
     </div>
-  </base-titled-section>
+  </div>
 </template>
 
 <script setup>

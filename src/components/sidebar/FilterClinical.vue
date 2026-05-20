@@ -1,35 +1,35 @@
 <template>
-  <table class="mb-0 w-full border border-gray-300 text-sm">
-    <thead>
-      <tr class="bg-gray-100">
-        <th class="w-[50px] border border-gray-300 px-2 py-1 text-center">
-          <input
-            v-model="selectAll"
-            type="checkbox"
-            class="align-middle"
-          />
-        </th>
-        <th class="border border-gray-300 px-2 py-1 text-left">Database</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
+  <div class="space-y-2">
+    <label
+      class="flex items-center gap-2 rounded-lg bg-surface-2 px-3 py-2
+             text-xs font-semibold text-ink-2"
+    >
+      <input
+        v-model="selectAll"
+        type="checkbox"
+        class="accent-primary"
+      />
+      Require all databases
+    </label>
+
+    <ul class="divide-y divide-border overflow-hidden rounded-lg border border-border">
+      <li
         v-for="option in options"
-        :key="option"
-        class="odd:bg-white even:bg-gray-50"
+        :key="option.id"
+        class="t-base bg-surface hover:bg-surface-2"
       >
-        <th class="border border-gray-300 px-2 py-1 text-center">
+        <label class="flex cursor-pointer items-center gap-2 px-3 py-2">
           <input
             v-model="selected"
             type="checkbox"
-            :value="option"
-            class="align-middle"
+            :value="option.id"
+            class="accent-primary"
           />
-        </th>
-        <td class="border border-gray-300 px-2 py-1">{{ option }}</td>
-      </tr>
-    </tbody>
-  </table>
+          <span class="text-sm text-ink">{{ option.label }}</span>
+        </label>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script setup>
@@ -44,7 +44,12 @@ import { useMainStore } from '@/stores/main'
 
 const main = useMainStore()
 
-const options = ['clinvar', 'cosmic', 'dbSnp', 'gnomAD']
+const options = [
+  { id: 'clinvar', label: 'ClinVar' },
+  { id: 'cosmic', label: 'COSMIC' },
+  { id: 'dbSnp', label: 'dbSNP' },
+  { id: 'gnomAD', label: 'gnomAD' }
+]
 const list = ref([])
 
 const selected = computed({
@@ -65,7 +70,7 @@ const selectAll = computed({
     return selected.value.length === options.length
   },
   set (value) {
-    selected.value = value ? [...options] : []
+    selected.value = value ? options.map(o => o.id) : []
   }
 })
 </script>

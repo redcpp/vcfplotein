@@ -32,17 +32,17 @@
   top: 0;
   left: 0;
   border-radius: 50%;
-  border: calc(120px * 0.03) solid #ff6b00;
+  border: calc(120px * 0.03) solid #3a5bd9;
   animation: fulfilling-bouncing-circle-spinner-orbit-animation infinite 4000ms ease;
 }
 .fulfilling-bouncing-circle-spinner .circle {
   height: 120px;
   width: 120px;
-  color: #ff6b00;
+  color: #3a5bd9;
   display: block;
   border-radius: 50%;
   position: relative;
-  border: calc(120px * 0.1) solid #ff6b00;
+  border: calc(120px * 0.1) solid #3a5bd9;
   animation: fulfilling-bouncing-circle-spinner-circle-animation infinite 4000ms ease;
   transform: rotate(0deg) scale(1);
 }

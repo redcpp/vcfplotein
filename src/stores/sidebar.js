@@ -1,28 +1,20 @@
 import { defineStore } from 'pinia'
 
+// Drives the persistent inspector sidebar in the workspace shell.
 export const useSidebarStore = defineStore('sidebar', {
   state: () => ({
-    active: false,
-    option: null
+    collapsed: false
   }),
 
   getters: {
-    isActive: (state) => state.active,
-    getOption: (state) => state.option
+    isCollapsed: (state) => state.collapsed,
+    // Kept so the plot's width calculation can still ask whether the
+    // sidebar is taking up horizontal space.
+    isActive: (state) => !state.collapsed
   },
 
   actions: {
-    setActive (value) { this.active = value },
-    setOption (value) { this.option = value },
-
-    toggle ({ active, option }) {
-      if (this.active && option === this.option) {
-        this.setActive(false)
-        this.setOption(null)
-        return
-      }
-      this.setActive(active)
-      this.setOption(option)
-    }
+    setCollapsed (value) { this.collapsed = value },
+    toggleCollapsed () { this.collapsed = !this.collapsed }
   }
 })

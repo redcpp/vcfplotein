@@ -1,21 +1,29 @@
 <template>
   <table class="w-full border-collapse text-sm">
-    <caption v-if="$slots['table-caption']" class="p-2 text-center text-go-primary-light">
+    <caption
+      v-if="$slots['table-caption']"
+      class="pb-3 text-left eyebrow"
+    >
       <slot name="table-caption" />
     </caption>
 
     <thead>
-      <tr class="border-b-2 border-gray-300 text-left">
+      <tr class="border-b border-border-strong text-left">
         <th
           v-for="field in fields"
           :key="field.key"
-          class="px-3 py-2 font-semibold text-go-primary select-none"
-          :class="{ 'cursor-pointer hover:bg-gray-100': field.sortable }"
+          class="select-none whitespace-nowrap px-3 py-2.5 text-left
+                 text-xs font-semibold uppercase tracking-wide text-ink-3 t-base"
+          :class="{ 'cursor-pointer hover:bg-surface-2 hover:text-ink-2': field.sortable }"
           @click="field.sortable && toggleSort(field.key)"
         >
           <span class="inline-flex items-center gap-1">
             {{ field.label }}
-            <span v-if="field.sortable" class="text-xs text-go-primary-light">
+            <span
+              v-if="field.sortable"
+              class="text-[0.625rem]"
+              :class="internalSortBy === field.key ? 'text-primary' : 'text-ink-4'"
+            >
               <template v-if="internalSortBy === field.key">
                 {{ sortDesc ? '▼' : '▲' }}
               </template>
@@ -30,16 +38,16 @@
       <tr
         v-for="(item, rowIndex) in pagedItems"
         :key="rowIndex"
-        class="border-b border-gray-200"
+        class="border-b border-border t-base"
         :class="[
-          striped && rowIndex % 2 === 1 ? 'bg-gray-50' : '',
-          hover ? 'hover:bg-go-secondary-light/10' : ''
+          striped && rowIndex % 2 === 1 ? 'bg-surface-2' : '',
+          hover ? 'hover:bg-surface-2' : ''
         ]"
       >
         <td
           v-for="field in fields"
           :key="field.key"
-          class="px-3 py-2 align-middle text-go-charcoal"
+          class="px-3 py-2 align-middle font-mono text-xs text-ink"
         >
           <slot
             :name="field.key"
@@ -52,7 +60,7 @@
       </tr>
 
       <tr v-if="pagedItems.length === 0">
-        <td :colspan="fields.length" class="px-3 py-6 text-center text-go-primary-light">
+        <td :colspan="fields.length" class="px-3 py-8 text-center text-sm text-ink-3">
           No data
         </td>
       </tr>

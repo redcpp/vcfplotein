@@ -1,120 +1,126 @@
 <template>
-  <div
+  <aside
+    v-show="!sidebar.isCollapsed"
     id="sidebar-wrapper"
-    class="flex h-full"
+    class="z-40 flex w-80 shrink-0 flex-col border-r border-border bg-surface
+           max-lg:fixed max-lg:bottom-0 max-lg:left-0 max-lg:top-14"
   >
-    <!-- Icon rail -->
-    <ul class="sidebar-nav m-0 list-none bg-go-primary p-0">
-      <li
-        v-for="item in items"
-        :key="item.fa"
-        class="leading-10"
+    <!-- Sidebar header -->
+    <div class="flex h-11 shrink-0 items-center justify-between border-b
+                border-border px-4">
+      <span class="eyebrow">{{ browseMode ? 'Dataset' : 'Inspector' }}</span>
+      <button
+        type="button"
+        class="t-base flex h-7 w-7 items-center justify-center rounded-md
+               text-ink-3 hover:bg-surface-2 hover:text-ink lg:hidden"
+        aria-label="Close panel"
+        @click="sidebar.setCollapsed(true)"
       >
-        <button
-          type="button"
-          data-toggle="tooltip"
-          data-placement="right"
-          :title="item.title"
-          class="block w-full cursor-pointer px-4 py-2 text-white
-                 hover:bg-go-primary-light"
-          :class="{
-            'border-l-[3px] border-go-secondary bg-go-primary-light':
-              myActive && item.fa === myOption
-          }"
-          @click="myToggle({ active: true, option: item.fa })"
-        >
-          <i :class="`fa fa-${item.fa}`"></i>
-        </button>
-      </li>
-    </ul>
-
-    <!-- Switchable panel -->
-    <div
-      v-show="myActive"
-      class="sidebar-extra relative h-full w-72 overflow-y-auto bg-gray-100 pb-12"
-    >
-      <div class="btn-close-sidebar absolute right-0 top-0">
-        <button
-          type="button"
-          tabindex="-1"
-          class="mr-[2px] mt-1 inline-flex h-7 w-7 items-center justify-center
-                 rounded-full bg-go-primary-light text-white hover:bg-go-primary"
-          @click="myToggle({ active: false })"
-        >
-          <i class="fa fa-chevron-left"></i>
-        </button>
-      </div>
-
-      <div class="pl-[0.35rem] text-left">
-        <!-- Top nav -->
-        <div v-show="myOption === 'upload'">
-          <SelectFile />
-          <Spinner v-if="mySpinner" class="mt-4 pt-4" />
-        </div>
-        <GenesTable v-show="myOption === 'dna'" :per-page="9" />
-        <SelectTranscript v-show="myOption === 'microscope'" />
-        <FilterDomains v-show="myOption === 'layer-group'" />
-        <FilterVariants v-show="myOption === 'filter'" />
-        <div v-show="myOption === 'plus-square'">
-          <h1>Insertions</h1>
-        </div>
-        <div v-show="myOption === 'minus-square'">
-          <h1>Deletions</h1>
-        </div>
-        <FilterSamples v-show="myOption === 'users'" />
-        <Bookmarks v-show="myOption === 'bookmark'" />
-        <!-- Bottom nav -->
-        <div v-show="myOption === 'cog'">
-          <h1>Cog</h1>
-        </div>
-      </div>
+        <i class="fa fa-xmark text-sm"></i>
+      </button>
     </div>
-  </div>
+
+    <!-- Sections -->
+    <div class="min-h-0 flex-1 overflow-y-auto">
+      <template v-if="browseMode">
+        <AccordionSection title="Open dataset">
+          <SelectFile />
+        </AccordionSection>
+        <AccordionSection
+          v-if="hasGenes"
+          title="Filter genes"
+          :badge="geneCount"
+        >
+          <GenesFilter />
+        </AccordionSection>
+      </template>
+
+      <template v-else>
+        <AccordionSection
+          title="Dataset"
+          :default-open="false"
+        >
+          <SelectFile />
+        </AccordionSection>
+        <AccordionSection
+          v-if="hasTranscripts"
+          title="Transcript"
+          :badge="transcriptCount"
+        >
+          <SelectTranscript />
+        </AccordionSection>
+        <AccordionSection
+          v-if="hasGeneLoaded"
+          title="Consequences"
+          :badge="consequenceCount"
+        >
+          <FilterConsequences />
+        </AccordionSection>
+        <AccordionSection
+          v-if="hasGeneLoaded"
+          title="Protein domains"
+          :badge="domainCount"
+        >
+          <FilterDomains />
+        </AccordionSection>
+        <AccordionSection
+          v-if="hasGeneLoaded"
+          title="Clinical databases"
+          :default-open="false"
+        >
+          <FilterClinical />
+        </AccordionSection>
+        <AccordionSection
+          v-if="hasGeneLoaded"
+          title="Samples"
+          :badge="sampleCount"
+          :default-open="false"
+        >
+          <FilterSamples />
+        </AccordionSection>
+        <AccordionSection
+          title="Bookmarks"
+          :default-open="false"
+        >
+          <Bookmarks />
+        </AccordionSection>
+      </template>
+    </div>
+  </aside>
 </template>
 
 <script setup>
-// Ported from components/Sidebar.vue.
-// Hand-rolled icon rail + switchable panel (NOT bootstrap-vue b-sidebar).
-// b-btn -> Tailwind <button>; Vuex mapGetters/mapActions -> Pinia stores.
-// The old watcher that auto-opened the `dna` panel once genes loaded is kept.
-import { computed, watch } from 'vue'
+// Persistent inspector sidebar. Shows dataset + gene-filter tools while
+// browsing genes, and the full variant inspector once a gene is open.
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 
 import { useMainStore } from '@/stores/main'
 import { useSidebarStore } from '@/stores/sidebar'
 
-import Spinner from '@/components/Spinner.vue'
+import AccordionSection from '@/components/layout/AccordionSection.vue'
 import SelectFile from '@/components/wizard/SelectFile.vue'
-import GenesTable from '@/components/wizard/GenesTable.vue'
+import GenesFilter from '@/components/wizard/GenesFilter.vue'
 import SelectTranscript from '@/components/sidebar/SelectTranscript.vue'
+import FilterConsequences from '@/components/sidebar/FilterConsequences.vue'
 import FilterDomains from '@/components/sidebar/FilterDomains.vue'
-import FilterVariants from '@/components/sidebar/FilterVariants.vue'
+import FilterClinical from '@/components/sidebar/FilterClinical.vue'
 import FilterSamples from '@/components/sidebar/FilterSamples.vue'
 import Bookmarks from '@/components/sidebar/Bookmarks.vue'
 
-const items = [
-  { fa: 'upload', title: 'Upload vcf/bookmark' },
-  { fa: 'dna', title: 'Select gene' },
-  { fa: 'microscope', title: 'Select transcript' },
-  { fa: 'layer-group', title: 'Filter domains' },
-  { fa: 'filter', title: 'Filter variants' },
-  { fa: 'users', title: 'Filter Samples' },
-  { fa: 'bookmark', title: 'Bookmarks' }
-]
-
+const route = useRoute()
 const main = useMainStore()
 const sidebar = useSidebarStore()
 
-const myGenes = computed(() => main.getGenes)
-const mySpinner = computed(() => main.getSpinner)
-const myActive = computed(() => sidebar.isActive)
-const myOption = computed(() => sidebar.getOption)
+const browseMode = computed(() => route.name === 'wizard')
 
-function myToggle (payload) {
-  sidebar.toggle(payload)
-}
+const hasGenes = computed(() => main.getGenes.length > 0)
+const hasTranscripts = computed(() => main.getTranscripts.length > 0)
+const hasGeneLoaded = computed(() => !!(main.getInfo && main.getInfo.name))
 
-watch(myGenes, (contents) => {
-  if (contents.length === 0) return
-  sidebar.setOption('dna')
-})
+const geneCount = computed(() => main.getGenes.length)
+const transcriptCount = computed(() => main.getTranscripts.length)
+const consequenceCount = computed(() => main.getConsequences.length)
+const domainCount = computed(() => main.getDomains.length)
+const sampleCount = computed(() => main.getSamples.length)
 </script>

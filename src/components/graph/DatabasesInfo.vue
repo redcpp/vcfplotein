@@ -1,87 +1,101 @@
 <template>
-  <div class="bar-wrapper">
-    <div class="general border-right text-left">
-      <div class="title"><h5>Prediction</h5></div>
-      <div class="only-top">
-        <div class="expand-items">
-          <div>
-            <p class="subtitle">Sift score</p>
-            <p>{{ variant.sift_score || '-' }}</p>
-          </div>
-          <div>
-            <p class="subtitle">Sift prediction</p>
-            <p class="capitalize">
-              {{ variant.sift_prediction || 'Not available' }}
-            </p>
-          </div>
+  <section class="space-y-4">
+    <!-- Pathogenicity prediction -->
+    <div>
+      <p class="eyebrow">Prediction</p>
+      <div class="mt-2 grid grid-cols-2 gap-2">
+        <div class="rounded-card border border-border bg-surface-2 px-2.5 py-2">
+          <p class="eyebrow">SIFT</p>
+          <p class="mt-0.5 font-mono text-sm font-semibold text-ink">
+            {{ variant.sift_score || '-' }}
+          </p>
+          <span
+            v-if="variant.sift_prediction"
+            class="mt-1 inline-block rounded-full px-2 py-0.5 text-xs capitalize"
+            :class="predTone(variant.sift_prediction, 'deleterious')"
+          >
+            {{ variant.sift_prediction.replace(/_/g, ' ') }}
+          </span>
+          <p v-else class="mt-1 text-xs text-ink-4">Not available</p>
         </div>
-        <div class="expand-items">
-          <div>
-            <p class="subtitle">Polyphen score</p>
-            <p>{{ variant.polyphen_score || '-' }}</p>
-          </div>
-          <div>
-            <p class="subtitle">Polyphen prediction</p>
-            <p class="capitalize">
-              {{ variant.polyphen_prediction
-                ? variant.polyphen_prediction.replace(/_/g, ' ')
-                : 'Not available' }}
-            </p>
-          </div>
+
+        <div class="rounded-card border border-border bg-surface-2 px-2.5 py-2">
+          <p class="eyebrow">PolyPhen</p>
+          <p class="mt-0.5 font-mono text-sm font-semibold text-ink">
+            {{ variant.polyphen_score || '-' }}
+          </p>
+          <span
+            v-if="variant.polyphen_prediction"
+            class="mt-1 inline-block rounded-full px-2 py-0.5 text-xs capitalize"
+            :class="predTone(variant.polyphen_prediction, 'damaging')"
+          >
+            {{ variant.polyphen_prediction.replace(/_/g, ' ') }}
+          </span>
+          <p v-else class="mt-1 text-xs text-ink-4">Not available</p>
         </div>
       </div>
     </div>
 
-    <div class="variants border-right text-left">
-      <div class="title"><h5>Clinical</h5></div>
-      <div class="top">
-        <div>
-          <p class="subtitle" style="text-transform: none;">{{ dbFormat('Clinvar') }}</p>
-          <p class="text-normal">
+    <!-- Clinical databases -->
+    <div>
+      <p class="eyebrow">Clinical</p>
+      <div class="mt-2 space-y-1.5">
+        <div class="flex items-center justify-between gap-3">
+          <span class="text-xs text-ink-3">{{ dbFormat('Clinvar') }}</span>
+          <span
+            class="rounded-full px-2 py-0.5 text-xs"
+            :class="presenceTone(variant[`clinvar_${version}`])"
+          >
             {{ variant[`clinvar_${version}`] ? 'Present' : 'Absent' }}
-          </p>
+          </span>
         </div>
-        <div>
-          <p class="subtitle" style="text-transform: none;">{{ dbFormat('Cosmic') }}</p>
-          <p class="text-normal">
+        <div class="flex items-center justify-between gap-3">
+          <span class="text-xs text-ink-3">{{ dbFormat('Cosmic') }}</span>
+          <span
+            class="rounded-full px-2 py-0.5 text-xs"
+            :class="presenceTone(variant[`cosmic_${version}`])"
+          >
             {{ variant[`cosmic_${version}`] ? 'Present' : 'Absent' }}
-          </p>
+          </span>
         </div>
       </div>
-      <div class="bottom">
-        <div>
-          <p class="subtitle">Clinical significance</p>
-          <p class="text-normal">
-            {{ clinicalSignificance() }}
-          </p>
-        </div>
+      <div class="mt-2 rounded-card border border-border bg-surface-2 px-2.5 py-2">
+        <p class="eyebrow">Clinical significance</p>
+        <p class="mt-0.5 text-sm capitalize text-ink">{{ clinicalSignificance() }}</p>
       </div>
     </div>
 
-    <div class="samples text-left">
-      <div class="title"><h5>Population</h5></div>
-      <div class="top">
-        <div>
-          <p class="subtitle" style="text-transform: none;">{{ dbFormat('gnomAD') }}</p>
-          <p class="text-normal">
+    <!-- Population databases -->
+    <div>
+      <p class="eyebrow">Population</p>
+      <div class="mt-2 space-y-1.5">
+        <div class="flex items-center justify-between gap-3">
+          <span class="text-xs text-ink-3">{{ dbFormat('gnomAD') }}</span>
+          <span
+            class="rounded-full px-2 py-0.5 text-xs"
+            :class="presenceTone(variant[`gnomad_${version}`])"
+          >
             {{ variant[`gnomad_${version}`] ? 'Present' : 'Absent' }}
-          </p>
+          </span>
         </div>
-        <div>
-          <p class="subtitle" style="text-transform: none;">{{ dbFormat('dbSnp') }}</p>
-          <p class="text-normal">
+        <div class="flex items-center justify-between gap-3">
+          <span class="text-xs text-ink-3">{{ dbFormat('dbSnp') }}</span>
+          <span
+            class="rounded-full px-2 py-0.5 text-xs"
+            :class="presenceTone(variant[`dbSnp_${version}`])"
+          >
             {{ variant[`dbSnp_${version}`] ? 'Present' : 'Absent' }}
-          </p>
+          </span>
         </div>
       </div>
-      <div class="bottom">
-        <div>
-          <p class="subtitle">Total population</p>
-          <p>{{ totalPopulation() }}</p>
-        </div>
+      <div class="mt-2 rounded-card border border-border bg-surface-2 px-2.5 py-2">
+        <p class="eyebrow">Total population frequency</p>
+        <p class="mt-0.5 font-mono text-sm font-semibold text-ink">
+          {{ totalPopulation() }}
+        </p>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup>
@@ -98,6 +112,20 @@ const variant = computed(() => main.getVariant)
 
 function dbFormat (dbName) {
   return dbNameFormat(dbName)
+}
+
+// Presence badge: present is clinically notable (uncertain tone), absent neutral.
+function presenceTone (present) {
+  return present
+    ? 'bg-uncertain-soft text-uncertain'
+    : 'bg-surface-3 text-ink-3'
+}
+
+// Prediction badge: a deleterious/damaging keyword reads pathogenic, else benign.
+function predTone (prediction, harmfulKeyword) {
+  return prediction.toLowerCase().includes(harmfulKeyword)
+    ? 'bg-pathogenic-soft text-pathogenic'
+    : 'bg-benign-soft text-benign'
 }
 
 function clinicalSignificance () {

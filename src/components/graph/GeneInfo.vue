@@ -1,253 +1,112 @@
 <template>
-  <div class="bar-wrapper">
-    <div class="general border-right text-left">
-      <div class="title"><h5>General</h5></div>
-      <div class="only-top">
-        <div>
-          <p class="subtitle">Gene name</p>
-          <p class="gene-name">{{ main.getInfo.name }}</p>
-        </div>
-        <div class="expand-items">
-          <div>
-            <p class="subtitle">Ensembl ID</p>
-            <p>{{ main.getInfo.id }}</p>
-          </div>
-          <div>
-            <p class="subtitle">Transcript ID</p>
-            <p>{{ main.getInfo.transcript_id }}</p>
-          </div>
+  <div class="card p-5">
+    <!-- Gene identity -->
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="eyebrow">Gene</p>
+        <h2 class="text-3xl font-bold italic leading-tight text-ink">
+          {{ main.getInfo.name }}
+        </h2>
+        <div class="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1">
+          <span class="text-xs text-ink-3">
+            Ensembl
+            <span class="ml-1 font-mono text-ink-2">{{ main.getInfo.id }}</span>
+          </span>
+          <span class="text-xs text-ink-3">
+            Transcript
+            <span class="ml-1 font-mono text-ink-2">{{ main.getInfo.transcript_id }}</span>
+          </span>
         </div>
       </div>
     </div>
 
-    <div class="variants scrollable border-right">
-      <div class="title" style="grid-column:1/3;"><h5>Variants</h5></div>
-      <div class="top">
-        <div>
-          <p class="subtitle">Total gene variants</p>
-          <p>{{ main.getInfo.num_vcf_vars }}</p>
-        </div>
-        <div>
-          <p class="subtitle">Variants in transcript</p>
-          <p>{{ main.getVariants.length }}</p>
-        </div>
-        <div>
-          <p class="subtitle">Variants in graph</p>
-          <p>{{ main.getStatusVariants.length }}</p>
-        </div>
+    <!-- Stat tiles -->
+    <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div class="rounded-card border border-border bg-surface-2 px-3 py-2.5">
+        <p class="eyebrow">Total gene variants</p>
+        <p class="mt-1 font-mono text-xl font-semibold text-ink">
+          {{ main.getInfo.num_vcf_vars }}
+        </p>
       </div>
-      <div class="bottom">
-        <div class="expand-items">
-          <p style="font-size: .7em;">
-            Base changes:<br><span class="muted">(in graph)</span>
-          </p>
-        </div>
-        <div class="count-wrapper">
-          <span class="ref">A</span>
-          <p class="alt-1">G {{ main.getBaseCount.A.G }}</p>
-          <p class="alt-2">C {{ main.getBaseCount.A.C }}</p>
-          <p class="alt-3">T {{ main.getBaseCount.A.T }}</p>
-        </div>
-        <div class="count-wrapper">
-          <span class="ref">G</span>
-          <p class="alt-2">A {{ main.getBaseCount.G.A }}</p>
-          <p class="alt-1">C {{ main.getBaseCount.G.C }}</p>
-          <p class="alt-3">T {{ main.getBaseCount.G.T }}</p>
-        </div>
-        <div class="count-wrapper">
-          <span class="ref">C</span>
-          <p class="alt-2">A {{ main.getBaseCount.C.A }}</p>
-          <p class="alt-1">G {{ main.getBaseCount.C.G }}</p>
-          <p class="alt-3">T {{ main.getBaseCount.C.T }}</p>
-        </div>
-        <div class="count-wrapper">
-          <span class="ref">T</span>
-          <p class="alt-2">A {{ main.getBaseCount.T.A }}</p>
-          <p class="alt-1">C {{ main.getBaseCount.T.C }}</p>
-          <p class="alt-3">G {{ main.getBaseCount.T.G }}</p>
-        </div>
+      <div class="rounded-card border border-border bg-surface-2 px-3 py-2.5">
+        <p class="eyebrow">Variants in transcript</p>
+        <p class="mt-1 font-mono text-xl font-semibold text-ink">
+          {{ main.getVariants.length }}
+        </p>
       </div>
-      <div class="scroll">
-        <p class="subtitle">Consequences</p>
-        <ul class="scroll-list">
+      <div class="rounded-card border border-border bg-surface-2 px-3 py-2.5">
+        <p class="eyebrow">Variants in graph</p>
+        <p class="mt-1 font-mono text-xl font-semibold text-primary-ink">
+          {{ main.getStatusVariants.length }}
+        </p>
+      </div>
+      <div class="rounded-card border border-border bg-surface-2 px-3 py-2.5">
+        <p class="eyebrow">Samples in graph</p>
+        <p class="mt-1 font-mono text-xl font-semibold text-ink">
+          {{ main.getStatusSamples.length }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Consequences legend + base changes -->
+    <div class="mt-4 grid gap-4 lg:grid-cols-3">
+      <div class="lg:col-span-2">
+        <p class="eyebrow">Consequences in graph</p>
+        <ul class="mt-2 flex flex-wrap gap-1.5">
           <li
             v-for="con in main.getStatusConsequences"
             :key="con.id"
-            :style="`color:${con.color};list-style-type:disc;`"
+            class="inline-flex items-center gap-1.5 rounded-full border border-border
+                   bg-surface-2 px-2 py-0.5 text-xs capitalize text-ink-2"
           >
-            <span style="color: black;">{{ con.name.replace(/_/g, ' ') }}</span>
+            <span
+              class="h-2 w-2 shrink-0 rounded-full"
+              :style="`background-color:${con.color};`"
+            />
+            {{ con.name.replace(/_/g, ' ') }}
+          </li>
+          <li v-if="main.getStatusConsequences.length === 0" class="text-xs text-ink-4">
+            None
           </li>
         </ul>
       </div>
-    </div>
 
-    <div class="samples scrollable">
-      <div class="title"><h5>Samples</h5></div>
-      <div class="only-top text-left">
-        <div class="expand-items">
-          <p style="font-size: .7em;">
-            Total gene samples: <strong>{{ main.getInfo.num_vcf_samples }}</strong>
-          </p>
-          <p style="font-size: .7em;">
-            Samples in transcript: <strong>{{ main.getSamples.length }}</strong>
-          </p>
-          <p style="font-size: .7em;">
-            Samples in graph: <strong>{{ main.getStatusSamples.length }}</strong>
-          </p>
+      <div>
+        <p class="eyebrow">Base changes <span class="normal-case text-ink-4">(in graph)</span></p>
+        <div class="mt-2 grid grid-cols-4 gap-2">
+          <div
+            v-for="ref in baseRefs"
+            :key="ref.ref"
+            class="rounded-card border border-border bg-surface-2 px-2 py-1.5"
+          >
+            <p class="font-mono text-sm font-semibold text-ink">{{ ref.ref }}</p>
+            <p
+              v-for="alt in ref.alts"
+              :key="alt.base"
+              class="font-mono text-[0.6875rem] leading-tight text-ink-3"
+            >
+              {{ alt.base }} {{ alt.count }}
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="scroll">
-        <p class="subtitle">Samples</p>
-        <ul class="scroll-list">
-          <li v-for="sample in main.getStatusSamples" :key="sample.id">
-            <span>{{ sample.name }}</span>
-          </li>
-        </ul>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useMainStore } from '@/stores/main'
 
 const main = useMainStore()
-</script>
 
-<!--
-  Graph info-panel styles. Ported verbatim from the OLD global
-  `assets/scss/_graph.scss`. NOT scoped: VariantInfo.vue and DatabasesInfo.vue
-  share the same `.bar-wrapper` grid markup and depend on these rules.
--->
-<style>
-.expand-items {
-  display: grid;
-  align-items: center;
-  height: 100%;
-}
-.bar-wrapper .gene-name {
-  font-size: 2.5em;
-  font-style: italic;
-  font-family: sans-serif !important;
-}
-.bar-wrapper {
-  display: grid;
-  grid-auto-columns: auto;
-  text-transform: uppercase;
-  border-bottom: 2px solid darkgray;
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-.bar-wrapper .general { grid-column: 1; }
-.bar-wrapper .variants { grid-column: 2; }
-.bar-wrapper .samples { grid-column: 3; }
-.bar-wrapper .scrollable {
-  grid-template-rows: 20px repeat(2, minmax(auto, 50px));
-}
-.bar-wrapper,
-.bar-wrapper h1,
-.bar-wrapper h2,
-.bar-wrapper h3,
-.bar-wrapper h4,
-.bar-wrapper h5,
-.bar-wrapper h6,
-.bar-wrapper p,
-.bar-wrapper * {
-  font-family: 'Montserrat', sans-serif !important;
-  margin: 0;
-}
-.bar-wrapper > div {
-  display: grid;
-  grid-auto-columns: minmax(max-content, auto);
-  grid-template-rows: 20px auto;
-  text-align: center;
-}
-.bar-wrapper > div .title {
-  grid-row: 1;
-  grid-column: 1 / 2;
-  display: flex;
-  text-align: center;
-  justify-content: center;
-  flex-direction: column;
-  background-color: #ddd;
-  margin: 0;
-}
-.bar-wrapper > div .title > * {
-  padding: 0;
-  margin: 0;
-  font-size: 11px;
-  font-weight: bold;
-}
-.bar-wrapper > div .subtitle {
-  color: rgb(32, 33, 36);
-  font-size: 10px;
-  margin-bottom: 0;
-}
-.bar-wrapper > div .top,
-.bar-wrapper > div .bottom,
-.bar-wrapper > div .only-top {
-  display: grid;
-  grid-gap: 10px;
-  grid-auto-columns: auto;
-  grid-auto-flow: column;
-  padding: 3px 10px;
-}
-.bar-wrapper > div .bottom { grid-row: 3; }
-.bar-wrapper > div .only-top {
-  grid-row: 2 / 4;
-  display: grid;
-  align-items: center;
-}
-.bar-wrapper > div .top {
-  grid-row: 2;
-  align-items: center;
-}
-.bar-wrapper > div.border-right { border-right: solid 2px #ccc !important; }
-.bar-wrapper > div.scrollable .title { grid-column: 1/3; }
-.bar-wrapper > div.scrollable .scroll {
-  grid-row: 2/4;
-  overflow-y: auto;
-  min-width: fit-content;
-  padding: 5px 10px 0 10px;
-  width: 100%;
-}
-.bar-wrapper > div.scrollable .scroll .scroll-list {
-  font-size: .75em;
-  padding-left: 15px;
-  text-align: left;
-  line-height: 1.5em;
-  text-transform: capitalize;
-}
-.count-wrapper {
-  display: grid;
-  grid-auto-columns: auto;
-}
-.count-wrapper p {
-  font-size: 10px !important;
-  text-align: left;
-  margin: 0;
-}
-.count-wrapper .ref {
-  grid-column: 1;
-  grid-row: 1 / 4;
-  margin-bottom: 0;
-  font-size: 1.5em;
-  display: flex;
-  align-items: center;
-}
-.count-wrapper .alt-1 {
-  grid-column: 2;
-  grid-row: 1 / 2;
-  align-self: center;
-}
-.count-wrapper .alt-2 {
-  grid-column: 2;
-  grid-row: 2 / 3;
-  align-self: center;
-}
-.count-wrapper .alt-3 {
-  grid-column: 2;
-  grid-row: 3 / 4;
-  align-self: center;
-}
-</style>
+const baseRefs = computed(() => {
+  const counts = main.getBaseCount
+  return [
+    { ref: 'A', alts: ['G', 'C', 'T'].map((b) => ({ base: b, count: counts.A[b] })) },
+    { ref: 'G', alts: ['A', 'C', 'T'].map((b) => ({ base: b, count: counts.G[b] })) },
+    { ref: 'C', alts: ['A', 'G', 'T'].map((b) => ({ base: b, count: counts.C[b] })) },
+    { ref: 'T', alts: ['A', 'C', 'G'].map((b) => ({ base: b, count: counts.T[b] })) }
+  ]
+})
+</script>

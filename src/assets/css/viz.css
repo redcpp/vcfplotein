@@ -1,33 +1,229 @@
 /*
  * D3 / SVG visualization styles — PLAIN CSS, intentionally NOT inside a
  * Tailwind layer. This keeps these rules out of reach of Tailwind's preflight
- * reset so the D3 tooltip and SVG wrapper render correctly.
+ * reset so the lollipop plot, tooltip and chrome render predictably.
  *
- * Ported from assets/scss/_utils.scss (.d3-tip) and the <style> block of
- * components/graph/SvgGrouper.vue. Later migration phases extend this file.
+ * Scope: the rewritten clinical-genomics lollipop plot owned by
+ * components/graph/SvgGrouper.vue. SVG element styles use the design-system
+ * CSS variables defined in assets/css/main.css.
  */
 
-/* d3-tip tooltip (replaces the old raw.githack d3-tip example stylesheet). */
-.d3-tip {
-  color: #000;
-  background-color: rgba(240, 240, 240, 0.8);
-  border: solid 1px #ccc;
-  box-shadow:
-    0 5px 20px 0 rgba(62, 57, 107, 0.07),
-    0 1px 5px 0 rgba(62, 57, 107, 0.06);
+/* ----------------------------------------------------------- container ---- */
+.vp-plot {
+  position: relative;
+  width: 100%;
+}
+
+.vp-scroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+#SvgGrouper {
+  display: block;
+  background: var(--color-surface);
+  font-family: var(--font-sans);
+}
+
+/* ------------------------------------------------------------- toolbar ---- */
+.vp-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 2px 12px;
+}
+
+.vp-zoom {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 9px;
+  overflow: hidden;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-xs);
+}
+
+.vp-btn {
+  appearance: none;
+  border: 0;
+  background: var(--color-surface);
+  color: var(--color-ink-2);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
   line-height: 1;
-  padding: 8px;
-  border-radius: 2px;
+  min-width: 34px;
+  padding: 7px 11px;
+  cursor: pointer;
+  transition: background-color 0.15s var(--ease-out), color 0.15s var(--ease-out);
+}
+.vp-btn + .vp-btn {
+  border-left: 1px solid var(--color-border);
+}
+.vp-btn:hover {
+  background: var(--color-surface-2);
+  color: var(--color-ink);
+}
+.vp-btn:active {
+  background: var(--color-surface-3);
+}
+
+/* --------------------------------------------------------------- legend ---- */
+.vp-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+}
+
+.vp-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vp-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  flex: none;
+  box-shadow: 0 0 0 1px rgba(17, 24, 39, 0.08);
+}
+
+.vp-legend-label {
+  font-size: 0.72rem;
+  color: var(--color-ink-2);
+  letter-spacing: 0.01em;
+}
+
+.vp-clear {
+  appearance: none;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
+  color: var(--color-primary-ink);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.15s var(--ease-out);
+}
+.vp-clear:hover {
+  background: var(--color-primary-soft);
+}
+
+/* -------------------------------------------------------------- tooltip ---- */
+.vp-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 40;
+  max-width: 260px;
+  padding: 9px 11px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 10px;
+  box-shadow: var(--shadow-pop);
+  opacity: 0;
+  transition: opacity 0.12s var(--ease-out);
+}
+.vp-tip[aria-hidden="false"] {
+  opacity: 1;
+}
+
+.vp-tip-title {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin-bottom: 5px;
+}
+
+.vp-tip-dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 10px;
+  margin: 0;
+}
+.vp-tip-dl dt {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+  white-space: nowrap;
+}
+.vp-tip-dl dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-ink);
+  word-break: break-word;
+}
+
+/*
+ * SVG element styles below are limited to INTERACTION states (hover / focus)
+ * and text-rendering hints. The load-bearing colors — fills and strokes that
+ * carry genomic meaning — are set as SVG presentation attributes in
+ * SvgGrouper.vue so that a standalone exported SVG (which carries no
+ * stylesheet) still renders faithfully.
+ */
+
+/* ----------------------------------------------------------- svg: domains -- */
+.vp-domain {
+  cursor: pointer;
+}
+.vp-domain:focus {
+  outline: none;
+}
+.vp-domain-rect {
+  transition: filter 0.15s var(--ease-out);
+}
+.vp-domain:hover .vp-domain-rect,
+.vp-domain:focus-visible .vp-domain-rect {
+  filter: brightness(1.07) saturate(1.1);
+}
+.vp-domain-label {
   pointer-events: none;
 }
 
-/* SvgGrouper wrapper — the scrollable SVG container for the lollipop plot. */
-#SvgGrouper {
-  width: 100%;
-  display: block;
-  overflow-x: auto;
+/* --------------------------------------------------------- svg: lollipops -- */
+.vp-lolli {
+  cursor: pointer;
+}
+.vp-lolli:focus {
+  outline: none;
+}
+.vp-head {
+  transition: r 0.12s var(--ease-out);
+}
+.vp-lolli-label {
+  pointer-events: none;
+}
+.vp-lolli:hover .vp-head {
+  filter: brightness(1.06);
+}
+.vp-lolli:hover .vp-lolli-label {
+  fill: var(--color-ink);
 }
 
-#SvgGrouper > svg {
-  display: block;
+/* keyboard focus ring for accessibility */
+.vp-lolli:focus-visible .vp-halo {
+  stroke: var(--color-primary);
+  stroke-width: 2.5;
+  stroke-dasharray: 3 2;
+}
+
+/* ----------------------------------------------- svg: database tracks ----- */
+.vp-dbmark {
+  cursor: pointer;
+  transition: filter 0.12s var(--ease-out);
+}
+.vp-dbmark:hover {
+  filter: brightness(1.08);
 }

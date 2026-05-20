@@ -1,9 +1,9 @@
 <template>
-  <nav v-if="totalPages > 1" class="flex items-center gap-1" aria-label="Pagination">
+  <nav v-if="totalPages > 1" class="flex items-center gap-1.5" aria-label="Pagination">
     <button
       type="button"
-      class="rounded border border-gray-300 px-2 py-1 text-sm text-go-primary
-             hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
+      class="t-base rounded-lg border border-border px-2.5 py-1 text-sm text-ink-2
+             hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-40"
       :disabled="modelValue <= 1"
       @click="goTo(modelValue - 1)"
     >
@@ -15,10 +15,10 @@
       :key="page.key"
       type="button"
       :disabled="page.value === null"
-      class="min-w-[2rem] rounded border px-2 py-1 text-sm"
+      class="t-base min-w-[2rem] rounded-lg border px-2 py-1 text-sm font-mono"
       :class="page.value === modelValue
-        ? 'border-go-secondary bg-go-secondary text-white'
-        : 'border-gray-300 text-go-primary hover:bg-gray-100 disabled:cursor-default disabled:opacity-60'"
+        ? 'border-primary bg-primary text-white'
+        : 'border-border text-ink-2 hover:bg-surface-2 disabled:cursor-default disabled:opacity-40'"
       @click="page.value !== null && goTo(page.value)"
     >
       {{ page.label }}
@@ -26,8 +26,8 @@
 
     <button
       type="button"
-      class="rounded border border-gray-300 px-2 py-1 text-sm text-go-primary
-             hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
+      class="t-base rounded-lg border border-border px-2.5 py-1 text-sm text-ink-2
+             hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-40"
       :disabled="modelValue >= totalPages"
       @click="goTo(modelValue + 1)"
     >

@@ -1,63 +1,71 @@
 <template>
-  <base-titled-section title="Domains">
-    <div>
+  <div class="space-y-2">
+    <input
+      v-model.trim="search"
+      type="text"
+      placeholder="Filter by domain"
+      class="t-base w-full rounded-lg border border-border bg-surface px-3 py-2
+             text-sm text-ink placeholder:text-ink-4 focus:border-primary
+             focus:outline-none focus:ring-2 focus:ring-primary/20"
+    />
+
+    <label
+      class="flex items-center gap-2 rounded-lg bg-surface-2 px-3 py-2
+             text-xs font-semibold text-ink-2"
+    >
       <input
-        v-model.trim="search"
-        type="text"
-        placeholder="Filter by domain"
-        class="mb-0 w-full rounded border border-gray-300 px-2 py-1 text-sm"
+        v-model="selectAll"
+        type="checkbox"
+        class="accent-primary"
       />
-      <table class="mb-0 w-full border border-gray-300 text-sm">
-        <thead>
-          <tr class="bg-gray-100">
-            <th class="w-[50px] border border-gray-300 px-2 py-1 text-center">
-              <input
-                v-model="selectAll"
-                type="checkbox"
-                class="align-middle"
-              />
-            </th>
-            <th class="border border-gray-300 px-2 py-1 text-left">Domain</th>
-            <th class="w-[20px] border border-gray-300 px-2 py-1 text-left">Color</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="dom in options"
-            :key="dom.id"
-            class="odd:bg-white even:bg-gray-50"
-          >
-            <td class="border border-gray-300 px-2 py-1 text-center">
-              <input
-                v-model="selected"
-                type="checkbox"
-                :value="dom.id"
-                class="align-middle"
-              />
-            </td>
-            <td
-              :title="dom.name"
-              data-toggle="tooltip"
-              data-placement="top"
-              class="border border-gray-300 px-2 py-1"
-            >
-              {{ dom.family }}
-              <span class="text-go-primary-light">({{ dom.start }}, {{ dom.end }})</span>
-            </td>
-            <td class="border border-gray-300 px-1 py-1">
-              <input
-                :id="dom.id"
-                :value="dom.color"
-                type="color"
-                class="h-6 w-full cursor-pointer border-0 p-0"
-                @change="changeColor"
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </base-titled-section>
+      Select all domains
+    </label>
+
+    <ul
+      v-if="options.length"
+      class="divide-y divide-border overflow-hidden rounded-lg border border-border"
+    >
+      <li
+        v-for="dom in options"
+        :key="dom.id"
+        class="t-base flex items-center gap-2 bg-surface px-3 py-2 hover:bg-surface-2"
+      >
+        <input
+          v-model="selected"
+          type="checkbox"
+          :value="dom.id"
+          class="accent-primary"
+        />
+        <span
+          :title="dom.name"
+          class="min-w-0 flex-1"
+        >
+          <span class="block truncate text-sm text-ink">{{ dom.family }}</span>
+          <span class="block font-mono text-[11px] text-ink-3">{{ dom.start }}&ndash;{{ dom.end }}</span>
+        </span>
+        <label
+          class="relative h-6 w-6 shrink-0 cursor-pointer overflow-hidden
+                 rounded-md border border-border ring-1 ring-inset ring-black/5"
+          :style="{ backgroundColor: dom.color }"
+        >
+          <input
+            :id="dom.id"
+            :value="dom.color"
+            type="color"
+            class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+            @change="changeColor"
+          />
+        </label>
+      </li>
+    </ul>
+
+    <p
+      v-else
+      class="px-1 py-2 text-xs text-ink-3"
+    >
+      No domains match your search
+    </p>
+  </div>
 </template>
 
 <script setup>

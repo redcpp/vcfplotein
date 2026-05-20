@@ -1,36 +1,35 @@
 <template>
-  <div
-    v-if="loaded"
-    id="default-wrapper"
-    class="min-h-screen bg-white text-go-charcoal"
-  >
-    <Navbar />
-    <main>
+  <div v-if="loaded">
+    <AppShell v-if="inWorkspace">
       <router-view />
-    </main>
+    </AppShell>
+    <router-view v-else />
     <notifications />
   </div>
 
-  <!-- Initial-load gate: ported from layouts/default.vue. -->
+  <!-- Initial-load gate. -->
   <div
     v-else
-    class="flex h-screen items-center justify-center"
+    class="flex h-screen items-center justify-center bg-canvas"
   >
     <Spinner />
   </div>
 </template>
 
 <script setup>
-// App shell — ported from layouts/default.vue.
-// Nuxt's <nuxt/> outlet becomes <router-view/>; <notifications/> is registered
-// globally by @kyvg/vue3-notification. The `loaded` flag preserves the old
-// next-tick gate that showed <Spinner/> until the first render completed.
-import { ref, nextTick, onMounted } from 'vue'
+// App root. Landing/About render standalone; the genomics workspace
+// (gene browser + plot) renders inside the shared AppShell so the two
+// routes feel like one continuous tool.
+import { ref, computed, nextTick, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 
-import Navbar from '@/components/Navbar.vue'
+import AppShell from '@/components/layout/AppShell.vue'
 import Spinner from '@/components/Spinner.vue'
 
+const route = useRoute()
 const loaded = ref(false)
+
+const inWorkspace = computed(() => ['wizard', 'graph'].includes(route.name))
 
 onMounted(() => {
   nextTick(() => {

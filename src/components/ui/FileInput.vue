@@ -1,10 +1,10 @@
 <template>
   <div
-    class="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg
-           border-2 border-dashed px-6 py-8 text-center transition-colors"
+    class="t-base flex cursor-pointer flex-col items-center justify-center gap-2
+           rounded-card border-2 border-dashed px-5 py-7 text-center"
     :class="dragging
-      ? 'border-go-secondary bg-go-secondary-light/10'
-      : 'border-gray-300 hover:border-go-secondary-light hover:bg-gray-50'"
+      ? 'border-primary bg-primary-soft'
+      : 'border-border-strong bg-surface-2 hover:border-primary hover:bg-primary-soft'"
     role="button"
     tabindex="0"
     @click="openPicker"
@@ -23,16 +23,22 @@
       @change="onChange"
     />
 
-    <span class="text-3xl text-go-primary-light" aria-hidden="true">⬆</span>
+    <span
+      class="flex h-10 w-10 items-center justify-center rounded-full
+             bg-surface text-primary shadow-xs"
+      aria-hidden="true"
+    >
+      <i class="fas fa-cloud-upload-alt"></i>
+    </span>
 
-    <p v-if="modelValue" class="font-medium text-go-primary">
+    <p v-if="modelValue" class="font-mono text-sm font-medium text-ink">
       {{ modelValue.name }}
     </p>
-    <p v-else class="text-go-primary-light">
+    <p v-else class="text-sm font-semibold text-ink-2">
       {{ placeholder }}
     </p>
 
-    <p class="text-xs text-go-primary-light">
+    <p class="text-xs text-ink-3">
       Click to browse or drag &amp; drop a file here
     </p>
   </div>

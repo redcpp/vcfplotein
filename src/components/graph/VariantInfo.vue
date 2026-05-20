@@ -1,87 +1,52 @@
 <template>
-  <div class="bar-wrapper">
-    <div class="general border-right text-left">
-      <div class="title"><h5>General</h5></div>
-      <div class="only-top">
-        <div>
-          <p class="subtitle">Gene name</p>
-          <p class="gene-name">{{ main.getInfo.name }}</p>
-        </div>
-        <div class="expand-items">
-          <div>
-            <p class="subtitle">Ensembl ID</p>
-            <p>{{ main.getInfo.id }}</p>
-          </div>
-          <div>
-            <p class="subtitle">Transcript ID</p>
-            <p>{{ main.getInfo.transcript_id }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+  <section>
+    <p class="eyebrow">Variant</p>
 
-    <div class="variants scrollable border-right">
-      <div class="title"><h5>Variants</h5></div>
-      <div class="top">
-        <div>
-          <p class="subtitle">Chromosome</p>
-          <p>{{ main.getVariant.chr }}</p>
-        </div>
-        <div>
-          <p class="subtitle">Genomic position</p>
-          <p>{{ main.getVariant.pos }}</p>
-        </div>
-        <div>
-          <p class="subtitle">Protein position</p>
-          <p>{{ main.getVariant.aa_pos }}</p>
-        </div>
+    <dl class="mt-2 divide-y divide-border">
+      <div class="flex items-baseline justify-between gap-3 py-1.5">
+        <dt class="text-xs text-ink-3">Chromosome</dt>
+        <dd class="font-mono text-sm text-ink">{{ main.getVariant.chr }}</dd>
       </div>
-      <div class="bottom">
-        <div>
-          <p class="subtitle">Reference</p>
-          <p>{{ main.getVariant.ref }}</p>
-        </div>
-        <div>
-          <p class="subtitle">Alternative</p>
-          <p>{{ main.getVariant.alt }}</p>
-        </div>
-        <div>
-          <p class="subtitle">Aminoacid Change</p>
-          <p>{{ main.getVariant.aa_change }}</p>
-        </div>
+      <div class="flex items-baseline justify-between gap-3 py-1.5">
+        <dt class="text-xs text-ink-3">Genomic position</dt>
+        <dd class="font-mono text-sm text-ink">{{ main.getVariant.pos }}</dd>
       </div>
-      <div class="scroll">
-        <p class="subtitle">Consequences</p>
-        <ul class="scroll-list">
-          <li
-            v-for="con in main.getVariant.consequences"
-            :key="con"
-            :style="`color:${colorcons[con]};`"
-            class="circles"
-          >
-            <span style="color: black;">{{ con.replace(/_/g, ' ') }}</span>
-          </li>
-        </ul>
+      <div class="flex items-baseline justify-between gap-3 py-1.5">
+        <dt class="text-xs text-ink-3">Protein position</dt>
+        <dd class="font-mono text-sm text-ink">{{ main.getVariant.aa_pos }}</dd>
       </div>
-    </div>
+      <div class="flex items-baseline justify-between gap-3 py-1.5">
+        <dt class="text-xs text-ink-3">Allele change</dt>
+        <dd class="font-mono text-sm text-ink">
+          {{ main.getVariant.ref }}
+          <span class="text-ink-4">&rarr;</span>
+          {{ main.getVariant.alt }}
+        </dd>
+      </div>
+      <div class="flex items-baseline justify-between gap-3 py-1.5">
+        <dt class="text-xs text-ink-3">Aminoacid change</dt>
+        <dd class="font-mono text-sm text-ink">{{ main.getVariant.aa_change }}</dd>
+      </div>
+    </dl>
 
-    <div class="samples scrollable">
-      <div class="title"><h5>Samples</h5></div>
-      <div class="top text-left">
-        <p style="font-size: .7em;">
-          Samples in variant: <strong>{{ main.getVariant.samples.length }}</strong>
-        </p>
-      </div>
-      <div class="scroll">
-        <p class="subtitle">Samples</p>
-        <ul class="scroll-list">
-          <li v-for="sample in main.getVariant.samples" :key="sample.id">
-            <span>{{ sample.name }}</span>
-          </li>
-        </ul>
-      </div>
+    <div class="mt-3">
+      <p class="eyebrow">Consequences</p>
+      <ul class="mt-1.5 flex flex-wrap gap-1.5">
+        <li
+          v-for="con in main.getVariant.consequences"
+          :key="con"
+          class="inline-flex items-center gap-1.5 rounded-full border border-border
+                 bg-surface-2 px-2 py-0.5 text-xs capitalize text-ink-2"
+        >
+          <span
+            class="h-2 w-2 shrink-0 rounded-full"
+            :style="`background-color:${colorcons[con]};`"
+          />
+          {{ con.replace(/_/g, ' ') }}
+        </li>
+      </ul>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup>
@@ -98,11 +63,3 @@ const colorcons = computed(() => {
   return dict
 })
 </script>
-
-<style scoped>
-ul.cons {
-  columns: 2;
-  -webkit-columns: 2;
-  -moz-columns: 2;
-}
-</style>

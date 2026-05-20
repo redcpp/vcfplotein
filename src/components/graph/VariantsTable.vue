@@ -1,29 +1,31 @@
 <template>
-  <div>
-    <data-table
-      id="tabla"
-      striped
-      hover
-      sort-by="pos"
-      :fields="fields"
-      :items="variants"
-      :current-page="currentPage"
-      :per-page="perPage"
-    >
-      <template #table-caption>
-        Variants in graph
-      </template>
+  <div class="card p-5">
+    <div class="overflow-x-auto">
+      <data-table
+        id="tabla"
+        striped
+        hover
+        sort-by="pos"
+        :fields="fields"
+        :items="variants"
+        :current-page="currentPage"
+        :per-page="perPage"
+      >
+        <template #table-caption>
+          Variants in graph
+        </template>
 
-      <template #consequences="{ value }">
-        {{ value.join(', ') }}
-      </template>
+        <template #consequences="{ value }">
+          {{ value.join(', ') }}
+        </template>
 
-      <template #samples="{ value }">
-        {{ value.map((d) => d.name).join(', ') }}
-      </template>
-    </data-table>
+        <template #samples="{ value }">
+          {{ value.map((d) => d.name).join(', ') }}
+        </template>
+      </data-table>
+    </div>
 
-    <div class="mt-3 flex justify-center">
+    <div class="mt-4 flex justify-center">
       <pagination
         v-model="currentPage"
         :total-rows="variants.length"

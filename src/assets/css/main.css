@@ -1,29 +1,259 @@
 @import "tailwindcss";
 
-/*
- * Brand design tokens — Tailwind CSS v4 CSS-first config.
- * Ported from assets/scss/_theme.scss and _colors.scss.
- * These generate utilities like `bg-go-primary`, `text-go-secondary`, etc.
- */
+/* ============================================================================
+ * VCF/Plotein — modern clinical-genomics platform design system.
+ *
+ * A light, airy workspace: white cards on a soft canvas, gentle depth, a
+ * confident clinical-azure primary, and clinical semantic colors (pathogenic /
+ * benign / uncertain) reserved for genomic meaning so they never collide with
+ * UI chrome. Genomic data — coordinates, codons, IDs — is set in monospace.
+ *
+ * Tailwind CSS v4 CSS-first config. Tokens here generate utilities such as
+ * `bg-surface`, `text-ink`, `border-border`, `shadow-md`, `font-mono`.
+ * ========================================================================= */
 @theme {
-  --color-go-primary: #263238;
-  --color-go-primary-light: #4f5b62;
-  --color-go-primary-dark: #000a12;
+  /* ---- Surfaces ---------------------------------------------------------- */
+  --color-canvas: #f3f5f8;        /* app background */
+  --color-surface: #ffffff;       /* cards / panels */
+  --color-surface-2: #eef1f5;     /* subtle raised / sunken fills */
+  --color-surface-3: #e4e9ef;     /* hover fills, track backgrounds */
 
-  --color-go-secondary: #ff6b00;
-  --color-go-secondary-light: #ff9c40;
-  --color-go-secondary-dark: #c43a00;
+  /* ---- Borders ----------------------------------------------------------- */
+  --color-border: #e5e9ef;        /* hairline */
+  --color-border-strong: #d2d9e2; /* emphasised dividers, inputs */
 
-  --color-go-charcoal: #212121;
+  /* ---- Text -------------------------------------------------------------- */
+  --color-ink: #131a2a;           /* primary text */
+  --color-ink-2: #475069;         /* secondary text */
+  --color-ink-3: #7a8499;         /* muted text, labels */
+  --color-ink-4: #aab2c2;         /* faint text, placeholders */
 
-  /* Fonts — loaded via Google Fonts <link> in index.html. */
-  --font-sans: "Quicksand", ui-sans-serif, system-ui, sans-serif;
-  --font-raleway: "Raleway", ui-sans-serif, system-ui, sans-serif;
-  --font-montserrat: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  /* ---- Primary — clinical azure ----------------------------------------- */
+  --color-primary: #3a5bd9;
+  --color-primary-hover: #2f49bd;
+  --color-primary-active: #263c9e;
+  --color-primary-soft: #eef1fd;  /* tinted background */
+  --color-primary-ink: #243a93;   /* readable primary text on light */
+
+  /* ---- Accent — selection / focus highlight ----------------------------- */
+  --color-accent: #7a5cff;
+  --color-accent-soft: #f0ecff;
+
+  /* ---- Clinical semantics (reserved for genomic meaning) ---------------- */
+  --color-pathogenic: #dc3b40;
+  --color-pathogenic-soft: #fcebec;
+  --color-benign: #2f9e44;
+  --color-benign-soft: #e8f6ec;
+  --color-uncertain: #db8a2b;
+  --color-uncertain-soft: #fbf0e0;
+
+  /* ---- Legacy `go-*` aliases (safety net for any un-migrated class) ----- */
+  --color-go-primary: #131a2a;
+  --color-go-primary-light: #475069;
+  --color-go-primary-dark: #0b0f1a;
+  --color-go-secondary: #3a5bd9;
+  --color-go-secondary-light: #6f88e6;
+  --color-go-secondary-dark: #2f49bd;
+  --color-go-charcoal: #131a2a;
+
+  /* ---- Typography -------------------------------------------------------- */
+  --font-sans: "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  /* ---- Radii ------------------------------------------------------------- */
+  --radius-card: 14px;
+
+  /* ---- Elevation — soft, layered, cool-tinted --------------------------- */
+  --shadow-xs: 0 1px 2px rgba(17, 24, 39, 0.05);
+  --shadow-sm: 0 1px 3px rgba(17, 24, 39, 0.06), 0 1px 2px rgba(17, 24, 39, 0.04);
+  --shadow-md: 0 6px 16px -6px rgba(17, 24, 39, 0.1), 0 2px 6px -2px rgba(17, 24, 39, 0.06);
+  --shadow-lg: 0 16px 40px -12px rgba(17, 24, 39, 0.16), 0 6px 14px -6px rgba(17, 24, 39, 0.08);
+  --shadow-pop: 0 12px 28px -8px rgba(17, 24, 39, 0.2);
+
+  /* ---- Motion ------------------------------------------------------------ */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.36, 0.64, 1);
 }
 
-/* Quicksand is the global font. */
+/* ------------------------------------------------------------------ base -- */
 html,
 body {
   font-family: var(--font-sans);
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+::selection {
+  background: rgba(58, 91, 217, 0.18);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Light, unobtrusive scrollbars. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c7cedb transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #ccd3df;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #aeb7c7;
+  background-clip: content-box;
+}
+
+/* ------------------------------------------------------------ components -- */
+
+/* `.card` — the base white panel. */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+}
+
+/* `.eyebrow` — a small uppercase tracked label for section headers. */
+.eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+/* `.focus-ring` — consistent keyboard focus treatment for custom controls. */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Smooth transition helper for interactive surfaces. */
+.t-base {
+  transition: background-color 0.16s var(--ease-out),
+    border-color 0.16s var(--ease-out), color 0.16s var(--ease-out),
+    box-shadow 0.16s var(--ease-out), transform 0.16s var(--ease-out);
+}
+
+/* `.skeleton` — loading placeholder shimmer. */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-surface-2);
+  border-radius: 8px;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.65),
+    transparent
+  );
+  animation: sk-shimmer 1.4s infinite;
+}
+
+/* ---------------------------------------------------------------- motion -- */
+@keyframes sk-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.anim-rise {
+  animation: rise-in 0.5s var(--ease-out) both;
+}
+.anim-fade {
+  animation: fade-in 0.45s var(--ease-out) both;
+}
+.anim-pop {
+  animation: pop-in 0.28s var(--ease-spring) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-rise,
+  .anim-fade,
+  .anim-pop,
+  .skeleton::after {
+    animation: none;
+  }
+}
+
+/* ----------------------------------------------- vue3-notification -------- */
+.vue-notification-group {
+  margin: 0.75rem;
+}
+.vue-notification {
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  padding: 0.8rem 0.95rem;
+  margin: 0 0 0.55rem;
+  color: var(--color-ink);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left-width: 3px;
+  border-radius: 11px;
+  box-shadow: var(--shadow-lg);
+}
+.vue-notification .notification-title {
+  font-weight: 700;
+}
+.vue-notification.warn {
+  border-left-color: var(--color-uncertain);
+}
+.vue-notification.error {
+  border-left-color: var(--color-pathogenic);
+}
+.vue-notification.success {
+  border-left-color: var(--color-benign);
 }

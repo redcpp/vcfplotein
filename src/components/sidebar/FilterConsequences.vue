@@ -1,45 +1,46 @@
 <template>
-  <table class="mb-0 w-full border border-gray-300 text-sm">
-    <thead>
-      <tr class="bg-gray-100">
-        <th class="w-[50px] border border-gray-300 px-2 py-1 text-center">
-          <input
-            v-model="selectAll"
-            type="checkbox"
-            class="align-middle"
-          />
-        </th>
-        <th class="border border-gray-300 px-2 py-1 text-left">Consequence</th>
-        <th class="w-[20px] border border-gray-300 px-2 py-1 text-left">Color</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
+  <div class="space-y-2">
+    <label
+      class="flex items-center gap-2 rounded-lg bg-surface-2 px-3 py-2
+             text-xs font-semibold text-ink-2"
+    >
+      <input
+        v-model="selectAll"
+        type="checkbox"
+        class="accent-primary"
+      />
+      Select all consequences
+    </label>
+
+    <ul class="divide-y divide-border overflow-hidden rounded-lg border border-border">
+      <li
         v-for="con in myConsequences"
         :key="con.id"
-        class="odd:bg-white even:bg-gray-50"
+        class="t-base flex items-center gap-2 bg-surface px-3 py-2 hover:bg-surface-2"
       >
-        <th class="border border-gray-300 px-2 py-1 text-center">
-          <input
-            v-model="selected"
-            type="checkbox"
-            :value="con.id"
-            class="align-middle"
-          />
-        </th>
-        <td class="border border-gray-300 px-2 py-1">{{ con.name }}</td>
-        <td class="border border-gray-300 px-1 py-1">
+        <input
+          v-model="selected"
+          type="checkbox"
+          :value="con.id"
+          class="accent-primary"
+        />
+        <span class="min-w-0 flex-1 truncate text-sm text-ink">{{ con.name }}</span>
+        <label
+          class="relative h-6 w-6 shrink-0 cursor-pointer overflow-hidden
+                 rounded-md border border-border ring-1 ring-inset ring-black/5"
+          :style="{ backgroundColor: con.color }"
+        >
           <input
             :id="con.id"
             :value="con.color"
             type="color"
-            class="h-6 w-full cursor-pointer border-0 p-0"
+            class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
             @change="changeColor"
           />
-        </td>
-      </tr>
-    </tbody>
-  </table>
+        </label>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script setup>

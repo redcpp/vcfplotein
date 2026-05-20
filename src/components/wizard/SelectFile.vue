@@ -1,28 +1,28 @@
 <template>
-  <base-titled-section title="Open VCF or Bookmark">
+  <div>
     <FileInput
       :model-value="myFile"
       accept=".vcf,.gz,.json"
       placeholder="Browse files..."
-      class="mt-2"
       @update:model-value="onFileChosen"
     />
 
-    <div class="mt-3">
-      Selected file:<br />
-      <span class="font-bold">
-        {{ (myFile && myFile.name) || 'None' }}
-      </span>
-    </div>
+    <dl class="mt-3 space-y-2">
+      <div>
+        <dt class="eyebrow text-ink-3">Selected file</dt>
+        <dd class="mt-0.5 truncate font-mono text-sm text-ink">
+          {{ (myFile && myFile.name) || 'None' }}
+        </dd>
+      </div>
 
-    <p v-if="myFile" class="mt-3">
-      Reference genome: ({{ myVersion }})
-      <br />
-      <span class="font-bold">
-        Human assembly {{ myVersion === 37 ? 'GRCh37 (hg 19)' : 'GRCh38' }}
-      </span>
-    </p>
-  </base-titled-section>
+      <div v-if="myFile">
+        <dt class="eyebrow text-ink-3">Reference genome</dt>
+        <dd class="mt-0.5 font-mono text-sm text-ink">
+          {{ myVersion === 37 ? 'GRCh37 (hg19)' : 'GRCh38' }}
+        </dd>
+      </div>
+    </dl>
+  </div>
 </template>
 
 <script setup>
