@@ -1,6 +1,6 @@
 # VCF/Plotein
 
-A **Vue 3** web application for the clinical interpretation of genetic variants from exome sequencing VCF files. It maps raw genomic variants onto protein structures so clinicians and researchers can visually assess pathogenicity, functional impact, and clinical relevance — through a single, modern clinical-genomics workspace.
+A **Vue 3** web application for the clinical interpretation of genetic variants from exome sequencing VCF files — running the full annotation pipeline, including multi-gigabyte file parsing, entirely in the browser. It maps raw genomic variants onto protein structures so clinicians and researchers can visually assess pathogenicity, functional impact, and clinical relevance — through a single, modern clinical-genomics workspace.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](#license)
 [![Published in Bioinformatics 2019](https://img.shields.io/badge/Published-Bioinformatics%202019-b31b1b.svg)](https://academic.oup.com/bioinformatics/article/35/22/4803/5510555)
@@ -13,6 +13,8 @@ A **Vue 3** web application for the clinical interpretation of genetic variants 
 **[Live demo](https://vcfplotein-production.up.railway.app)** &nbsp;·&nbsp; **[Published in Bioinformatics (2019)](https://academic.oup.com/bioinformatics/article/35/22/4803/5510555)** &nbsp;·&nbsp; **[Open-access full text (PMC)](https://pmc.ncbi.nlm.nih.gov/articles/PMC6853650/)** &nbsp;·&nbsp; **[Original instance (LIIGH-UNAM)](http://vcfplotein.liigh.unam.mx)**
 
 ![VCF/Plotein — BAP1 variant lollipop plot with clinical database tracks](public/screenshot.png)
+
+**What this demonstrates.** Bringing an abandoned 2019 toolchain back to a current, maintainable stack — then making it hold up under real data. Multi-gigabyte VCFs are streamed and parsed off the main thread in a Web Worker; variant-to-gene mapping runs on an interval tree; the network layer degrades gracefully when upstream services fail. Production-reliability and data-at-scale engineering in service of a peer-reviewed clinical tool.
 
 ## Published research
 
@@ -134,4 +136,4 @@ The application was developed at the **Cancer Genetics & Bioinformatics Lab, LII
 
 ## License
 
-Released under the [MIT License](LICENSE.txt). Copyright 2018 Carla Daniela Robles Espinoza (LIIGH-UNAM).
+Released under the [MIT License](LICENSE.txt). Copyright 2018 Carla Daniela Robles Espinoza (LIIGH-UNAM); copyright 2026 Diego Said Anaya Mancilla.
