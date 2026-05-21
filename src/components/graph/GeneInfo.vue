@@ -1,8 +1,12 @@
 <template>
   <div class="card p-5">
-    <!-- Gene identity -->
-    <div class="flex flex-wrap items-end justify-between gap-4">
-      <div>
+    <div class="grid gap-4 lg:grid-cols-3">
+      <!-- Left: gene identity, a thin metric strip, and the consequences
+           legend. Keeping all three stacked here makes the left column about
+           as tall as the base-changes matrix beside it, so the card stays
+           compact with no dead whitespace. -->
+      <div class="lg:col-span-2">
+        <!-- Gene identity -->
         <p class="eyebrow">Gene</p>
         <h2 class="text-3xl font-bold italic leading-tight text-ink">
           {{ main.getInfo.name }}
@@ -17,42 +21,36 @@
             <span class="ml-1 font-mono text-ink-2">{{ main.getInfo.transcript_id }}</span>
           </span>
         </div>
-      </div>
-    </div>
 
-    <!-- Stats + consequences (left) · base changes (right) -->
-    <div class="mt-4 grid gap-4 lg:grid-cols-3">
-      <!-- Left column: 2×2 stat tiles, then the consequences legend. Pairing
-           these in one column makes the column as tall as the base-changes
-           matrix beside it, so no dead whitespace is left in the corner. -->
-      <div class="lg:col-span-2">
-        <div class="grid grid-cols-2 gap-3">
-          <div class="rounded-card border border-border bg-surface-2 px-3 py-2.5">
-            <p class="eyebrow">Total gene variants</p>
-            <p class="mt-1 font-mono text-xl font-semibold text-ink">
+        <!-- Metric strip — four counts, no boxes -->
+        <dl class="mt-4 flex flex-wrap gap-x-7 gap-y-3">
+          <div>
+            <dt class="eyebrow">Total gene variants</dt>
+            <dd class="mt-0.5 font-mono text-lg font-semibold text-ink">
               {{ main.getInfo.num_vcf_vars }}
-            </p>
+            </dd>
           </div>
-          <div class="rounded-card border border-border bg-surface-2 px-3 py-2.5">
-            <p class="eyebrow">Variants in transcript</p>
-            <p class="mt-1 font-mono text-xl font-semibold text-ink">
+          <div>
+            <dt class="eyebrow">Variants in transcript</dt>
+            <dd class="mt-0.5 font-mono text-lg font-semibold text-ink">
               {{ main.getVariants.length }}
-            </p>
+            </dd>
           </div>
-          <div class="rounded-card border border-border bg-surface-2 px-3 py-2.5">
-            <p class="eyebrow">Variants in graph</p>
-            <p class="mt-1 font-mono text-xl font-semibold text-primary-ink">
+          <div>
+            <dt class="eyebrow">Variants in graph</dt>
+            <dd class="mt-0.5 font-mono text-lg font-semibold text-primary-ink">
               {{ main.getStatusVariants.length }}
-            </p>
+            </dd>
           </div>
-          <div class="rounded-card border border-border bg-surface-2 px-3 py-2.5">
-            <p class="eyebrow">Samples in graph</p>
-            <p class="mt-1 font-mono text-xl font-semibold text-ink">
+          <div>
+            <dt class="eyebrow">Samples in graph</dt>
+            <dd class="mt-0.5 font-mono text-lg font-semibold text-ink">
               {{ main.getStatusSamples.length }}
-            </p>
+            </dd>
           </div>
-        </div>
+        </dl>
 
+        <!-- Consequences legend -->
         <div class="mt-4">
           <p class="eyebrow">Consequences in graph</p>
           <ul class="mt-2 flex flex-wrap gap-1.5">
@@ -75,7 +73,7 @@
         </div>
       </div>
 
-      <!-- Right column: base-changes matrix -->
+      <!-- Right: base-changes matrix -->
       <div>
         <p class="eyebrow">Base changes <span class="normal-case text-ink-4">(ref → alt)</span></p>
         <div class="mt-2 overflow-hidden rounded-card border border-border bg-surface-2">
