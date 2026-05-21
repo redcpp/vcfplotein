@@ -708,14 +708,6 @@ function setupZoom () {
   svg.value
     .call(zoomBehavior)
     .on('dblclick.zoom', null)
-    // Click on empty canvas (the svg itself or its background rect, i.e. no
-    // variant / domain hit) clears the current selection.
-    .on('click', (event) => {
-      const tgt = event.target
-      if (tgt === svgRef.value || (tgt.classList && tgt.classList.contains('vp-bg'))) {
-        main.clearVariant()
-      }
-    })
 }
 
 function zoomBy (k) {

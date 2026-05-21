@@ -90,35 +90,16 @@
             </div>
           </div>
 
-          <!-- Variant detail dock -->
-          <transition name="dock">
-            <aside
-              v-if="variantSelected"
-              class="w-[20rem] shrink-0
-                     max-xl:fixed max-xl:bottom-0 max-xl:right-0 max-xl:top-14
-                     max-xl:z-30 max-xl:w-[22rem] max-xl:overflow-y-auto
-                     max-xl:p-4 max-xl:shadow-lg max-xl:bg-canvas"
-            >
-              <div class="card overflow-hidden">
-                <div class="flex items-center justify-between border-b
-                            border-border px-4 py-3">
-                  <span class="eyebrow">Variant detail</span>
-                  <button
-                    type="button"
-                    class="t-base flex h-7 w-7 items-center justify-center
-                           rounded-md text-ink-3 hover:bg-surface-2
-                           hover:text-ink"
-                    aria-label="Close variant detail"
-                    @click="main.clearVariant()"
-                  >
-                    <i class="fa fa-xmark text-sm"></i>
-                  </button>
-                </div>
-                <VariantInfo />
-                <DatabasesInfo />
-              </div>
-            </aside>
-          </transition>
+          <!-- Variant navigator — permanent master-detail column. -->
+          <aside
+            class="w-[20rem] shrink-0
+                   max-xl:fixed max-xl:bottom-0 max-xl:right-0 max-xl:top-14
+                   max-xl:z-30 max-xl:w-[22rem] max-xl:overflow-y-auto
+                   max-xl:p-4 max-xl:shadow-lg max-xl:bg-canvas"
+            :class="{ 'max-xl:hidden': !variantSelected }"
+          >
+            <VariantNavigator />
+          </aside>
         </div>
       </div>
     </fullscreen>
@@ -137,8 +118,7 @@ import { useGenefilterStore } from '@/stores/genefilter'
 import Spinner from '@/components/Spinner.vue'
 import MainCard from '@/components/graph/MainCard.vue'
 import GeneInfo from '@/components/graph/GeneInfo.vue'
-import VariantInfo from '@/components/graph/VariantInfo.vue'
-import DatabasesInfo from '@/components/graph/DatabasesInfo.vue'
+import VariantNavigator from '@/components/graph/VariantNavigator.vue'
 
 const main = useMainStore()
 const genefilter = useGenefilterStore()
@@ -206,15 +186,3 @@ watch(() => main.getSelectedGene, () => {
   }
 })
 </script>
-
-<style scoped>
-.dock-enter-active,
-.dock-leave-active {
-  transition: opacity 0.22s ease, transform 0.22s ease;
-}
-.dock-enter-from,
-.dock-leave-to {
-  opacity: 0;
-  transform: translateX(12px);
-}
-</style>
