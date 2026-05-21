@@ -763,6 +763,23 @@ onUnmounted(() => {
   resizeObserver = null
 })
 
+// Recompute layout + redraw whenever the inputs change.
+//
+// A shallow (identity) watch is sufficient here — `deep: true` is deliberately
+// NOT used. The pre-Vue3 (2019) code never deep-watched these either; the flag
+// was added as a blanket default during the Vue3 migration and is pure cost on
+// large variant arrays.
+//
+// `mutations`, `domains` and `consequences` are all supplied by MainCard as
+// Pinia `.filter()` getters (getStatusVariants / getStatusDomains /
+// getStatusConsequences). `Array.prototype.filter` returns a brand-new array on
+// every getter evaluation, so ANY content change — adding a variant, toggling a
+// domain/consequence status or recoloring one — yields a new array identity.
+// There is no in-place same-identity mutation path a shallow watch could miss:
+// HandleMutations builds fresh objects via Object.assign/map, and interval
+// Partition only ever sorts a defensive `[...props.domains]` copy. `proteinAA
+// Size` is a primitive. Watching identity therefore redraws on exactly the same
+// triggers as before, without paying for deep traversal.
 watch(
   [
     () => props.mutations,
@@ -770,8 +787,7 @@ watch(
     () => props.consequences,
     () => props.proteinAASize
   ],
-  () => nextTick(recalculate),
-  { deep: true }
+  () => nextTick(recalculate)
 )
 
 // Re-style on selection change without a full recompute.
