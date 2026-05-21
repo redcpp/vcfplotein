@@ -128,7 +128,7 @@ Precision medicine depends on turning raw sequencing data into interpretable ins
 
 ## Author
 
-The VCF/Plotein web application — its interface, data visualization and architecture — was designed and written by **[Diego Said Anaya-Mancilla](https://github.com/redcpp)**. The original 2018–2019 implementation and the 2026 ground-up rewrite to a modern Vue 3 / Vite stack (documented above) are both his work.
+The VCF/Plotein web application — its interface, data visualization and architecture — was designed and written by **[Diego Said Anaya Mancilla](https://github.com/redcpp)**. The original 2018–2019 implementation and the 2026 ground-up rewrite to a modern Vue 3 / Vite stack (documented above) are both his work.
 
 The application was developed at the **Cancer Genetics & Bioinformatics Lab, LIIGH-UNAM** (Querétaro, Mexico), where the surrounding research was carried out and published in *Bioinformatics* (2019) — see [Published research](#published-research). That publication is credited to the full lab team.
 
