@@ -33,6 +33,11 @@ const baseState = () => ({
   variant: {},
   selectedGene: null,
   spinner: false,
+  // Streaming-parse progress: 0..1, or null when not parsing.
+  parseProgress: null,
+  // User-facing error message (e.g. file too large / decompression failed).
+  // `null` when there is nothing to show.
+  error: null,
   v_filters: Object.assign({}, BASE_FILTERS)
 })
 
@@ -64,6 +69,8 @@ export const useMainStore = defineStore('main', {
     getDomains: (state) => state.domains,
     getConsequences: (state) => state.consequences,
     getSpinner: (state) => state.spinner,
+    getParseProgress: (state) => state.parseProgress,
+    getError: (state) => state.error,
     getVariant: (state) => state.variant,
     getSelectedGene: (state) => state.selectedGene,
     // Filter
@@ -156,6 +163,9 @@ export const useMainStore = defineStore('main', {
     setDomains (domains) { this.domains = domains },
     setConsequences (consequences) { this.consequences = consequences },
     setSpinner (spinner) { this.spinner = spinner },
+    setParseProgress (progress) { this.parseProgress = progress },
+    setError (error) { this.error = error },
+    clearError () { this.error = null },
     setVariant (variant) { this.variant = variant },
     setSelectedGene (gene) { this.selectedGene = gene },
     setNumVcfVars (num_vcf_vars) { this.info.num_vcf_vars = num_vcf_vars },
@@ -182,6 +192,8 @@ export const useMainStore = defineStore('main', {
       this.setGoterms({})
       this.setInfo({})
       this.setTranscripts([])
+      this.setParseProgress(null)
+      this.clearError()
 
       this.clearAllGene()
     },
@@ -200,6 +212,7 @@ export const useMainStore = defineStore('main', {
     // --- Fetch ---
     async fetchAllData (gene) {
       this.clearAllGene()
+      this.clearError()
       this.setSpinner(true)
       console.time('fetchAllData')
 
@@ -215,28 +228,39 @@ export const useMainStore = defineStore('main', {
       this.setInfo(info)
       this.setDomains(await API.fetchDomains(info))
 
-      VCFParser.readVCFVariants(this.file, gene).then(async (vcf_vars) => {
-        if (vcf_vars.length === 0) {
-          console.log('vcf_vars length is 0')
-          return
-        }
-        this.setNumVcfVars(vcf_vars.length)
-        this.setNumVcfSamples(Object.keys(vcf_vars[0].samples).length)
+      let vcf_vars
+      try {
+        // Cached index lookup — no file re-read / re-decompress / re-scan.
+        vcf_vars = await VCFParser.readVCFVariants(this.file, gene)
+      } catch (error) {
+        console.error('Error reading variants from VCF', error)
+        this.setError(error.message || 'Could not read variants from the VCF.')
+        this.setSpinner(false)
+        return
+      }
 
-        try {
-          console.time('fetchVarsAndCons')
-          let obj = await API.fetchVariantsAndConsequences(info, vcf_vars)
-          console.timeEnd('fetchVarsAndCons')
-
-          this.setVariants(obj.variants)
-          this.setConsequences(obj.consequences)
-        } catch (error) {
-          console.error('Error fetching variants', error)
-        }
-
+      if (vcf_vars.length === 0) {
+        console.log('vcf_vars length is 0')
         this.setSpinner(false)
         console.timeEnd('fetchAllData')
-      })
+        return
+      }
+      this.setNumVcfVars(vcf_vars.length)
+      this.setNumVcfSamples(Object.keys(vcf_vars[0].samples).length)
+
+      try {
+        console.time('fetchVarsAndCons')
+        let obj = await API.fetchVariantsAndConsequences(info, vcf_vars)
+        console.timeEnd('fetchVarsAndCons')
+
+        this.setVariants(obj.variants)
+        this.setConsequences(obj.consequences)
+      } catch (error) {
+        console.error('Error fetching variants', error)
+      }
+
+      this.setSpinner(false)
+      console.timeEnd('fetchAllData')
     },
 
     // --- Setters / orchestration ---
@@ -244,6 +268,10 @@ export const useMainStore = defineStore('main', {
       // Vuex `setFile` action — renamed to avoid clashing with the
       // `setFile` mutation-action above (which only assigns `state.file`).
       this.clearAllData()
+      // Drop any previously parsed VCF index so a new file is parsed fresh
+      // (and the old large index can be garbage-collected).
+      VCFParser.clearCache()
+      this.clearError()
       this.setFile(file)
 
       if (this.isBookmark) this.setBookmarkContents()
@@ -251,22 +279,35 @@ export const useMainStore = defineStore('main', {
     },
     async setVcfContents () {
       this.setSpinner(true)
+      this.clearError()
+      this.setParseProgress(0)
 
-      console.time('parsefile')
-      let res = await VCFParser.readVCFGenes(this.file)
-      let genes = res.genes
-      let version = res.version
-      console.timeEnd('parsefile')
+      let res
+      try {
+        console.time('parsefile')
+        // The VCF is parsed ONCE here, off the main thread, in streaming mode.
+        // The result (a per-gene-region variant index) is cached inside
+        // VCFParser, so later `fetchAllData` gene clicks are pure lookups.
+        res = await VCFParser.readVCFGenes(this.file, (loaded, total) => {
+          this.setParseProgress(total > 0 ? loaded / total : null)
+        })
+        console.timeEnd('parsefile')
+      } catch (err) {
+        // File-size guard / decompression failure — surface a friendly error
+        // instead of a silent crash.
+        console.error('VCF parse failed:', err)
+        this.setError(err.message || 'Could not parse this VCF file.')
+        this.setParseProgress(null)
+        this.setSpinner(false)
+        return
+      }
+      this.setParseProgress(null)
 
-      console.time('getintersection')
-      // Lazy-loaded: the gene reference data is ~14 MB — keep it out of the
-      // main bundle and only fetch it when a VCF actually needs gene mapping.
-      const GeneTree = await import('@/lib/GeneTree')
-      genes = await GeneTree.positionToName({ genes, version })
-      console.timeEnd('getintersection')
-
-      this.setVersion(version)
-      this.setGenes(genes)
+      // `res.genes` is already the mapped coding-gene list: parsing AND the
+      // gene-mapping interval-tree sweep both ran inside the worker, off the
+      // main thread. Nothing heavy happens here.
+      this.setVersion(res.version)
+      this.setGenes(res.genes)
       this.setSpinner(false)
     },
     setSelectedDomains (selected) {

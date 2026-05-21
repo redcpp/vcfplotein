@@ -55,6 +55,23 @@
             <MainCard v-else-if="main.getVariants.length" />
 
             <div
+              v-else-if="main.getError"
+              class="card flex min-h-[420px] flex-col items-center
+                     justify-center p-8 text-center"
+            >
+              <div class="flex h-12 w-12 items-center justify-center
+                          rounded-xl bg-pathogenic-soft text-pathogenic">
+                <i class="fa fa-triangle-exclamation text-lg"></i>
+              </div>
+              <h3 class="mt-4 text-base font-bold text-ink">
+                Couldn't load variants
+              </h3>
+              <p class="mt-1.5 max-w-sm text-sm text-ink-2">
+                {{ main.getError }}
+              </p>
+            </div>
+
+            <div
               v-else
               class="card flex min-h-[420px] flex-col items-center
                      justify-center p-8 text-center"
