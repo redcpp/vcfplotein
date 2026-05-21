@@ -20,57 +20,62 @@
       </div>
     </div>
 
-    <!-- Stat tiles -->
-    <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <div class="rounded-card border border-border bg-surface-2 px-3 py-2.5">
-        <p class="eyebrow">Total gene variants</p>
-        <p class="mt-1 font-mono text-xl font-semibold text-ink">
-          {{ main.getInfo.num_vcf_vars }}
-        </p>
-      </div>
-      <div class="rounded-card border border-border bg-surface-2 px-3 py-2.5">
-        <p class="eyebrow">Variants in transcript</p>
-        <p class="mt-1 font-mono text-xl font-semibold text-ink">
-          {{ main.getVariants.length }}
-        </p>
-      </div>
-      <div class="rounded-card border border-border bg-surface-2 px-3 py-2.5">
-        <p class="eyebrow">Variants in graph</p>
-        <p class="mt-1 font-mono text-xl font-semibold text-primary-ink">
-          {{ main.getStatusVariants.length }}
-        </p>
-      </div>
-      <div class="rounded-card border border-border bg-surface-2 px-3 py-2.5">
-        <p class="eyebrow">Samples in graph</p>
-        <p class="mt-1 font-mono text-xl font-semibold text-ink">
-          {{ main.getStatusSamples.length }}
-        </p>
-      </div>
-    </div>
-
-    <!-- Consequences legend + base changes -->
+    <!-- Stats + consequences (left) · base changes (right) -->
     <div class="mt-4 grid gap-4 lg:grid-cols-3">
+      <!-- Left column: 2×2 stat tiles, then the consequences legend. Pairing
+           these in one column makes the column as tall as the base-changes
+           matrix beside it, so no dead whitespace is left in the corner. -->
       <div class="lg:col-span-2">
-        <p class="eyebrow">Consequences in graph</p>
-        <ul class="mt-2 flex flex-wrap gap-1.5">
-          <li
-            v-for="con in main.getStatusConsequences"
-            :key="con.id"
-            class="inline-flex items-center gap-1.5 rounded-full border border-border
-                   bg-surface-2 px-2 py-0.5 text-xs capitalize text-ink-2"
-          >
-            <span
-              class="h-2 w-2 shrink-0 rounded-full"
-              :style="`background-color:${con.color};`"
-            />
-            {{ con.name.replace(/_/g, ' ') }}
-          </li>
-          <li v-if="main.getStatusConsequences.length === 0" class="text-xs text-ink-4">
-            None
-          </li>
-        </ul>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="rounded-card border border-border bg-surface-2 px-3 py-2.5">
+            <p class="eyebrow">Total gene variants</p>
+            <p class="mt-1 font-mono text-xl font-semibold text-ink">
+              {{ main.getInfo.num_vcf_vars }}
+            </p>
+          </div>
+          <div class="rounded-card border border-border bg-surface-2 px-3 py-2.5">
+            <p class="eyebrow">Variants in transcript</p>
+            <p class="mt-1 font-mono text-xl font-semibold text-ink">
+              {{ main.getVariants.length }}
+            </p>
+          </div>
+          <div class="rounded-card border border-border bg-surface-2 px-3 py-2.5">
+            <p class="eyebrow">Variants in graph</p>
+            <p class="mt-1 font-mono text-xl font-semibold text-primary-ink">
+              {{ main.getStatusVariants.length }}
+            </p>
+          </div>
+          <div class="rounded-card border border-border bg-surface-2 px-3 py-2.5">
+            <p class="eyebrow">Samples in graph</p>
+            <p class="mt-1 font-mono text-xl font-semibold text-ink">
+              {{ main.getStatusSamples.length }}
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <p class="eyebrow">Consequences in graph</p>
+          <ul class="mt-2 flex flex-wrap gap-1.5">
+            <li
+              v-for="con in main.getStatusConsequences"
+              :key="con.id"
+              class="inline-flex items-center gap-1.5 rounded-full border border-border
+                     bg-surface-2 px-2 py-0.5 text-xs capitalize text-ink-2"
+            >
+              <span
+                class="h-2 w-2 shrink-0 rounded-full"
+                :style="`background-color:${con.color};`"
+              />
+              {{ con.name.replace(/_/g, ' ') }}
+            </li>
+            <li v-if="main.getStatusConsequences.length === 0" class="text-xs text-ink-4">
+              None
+            </li>
+          </ul>
+        </div>
       </div>
 
+      <!-- Right column: base-changes matrix -->
       <div>
         <p class="eyebrow">Base changes <span class="normal-case text-ink-4">(ref → alt)</span></p>
         <div class="mt-2 overflow-hidden rounded-card border border-border bg-surface-2">
